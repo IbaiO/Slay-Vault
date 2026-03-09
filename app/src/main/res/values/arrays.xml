@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Opciones del selector de idioma -->
+    <string-array name="language_entries">
+        <item>Español</item>
+        <item>English</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>es</item>
+        <item>en</item>
+    </string-array>
+
+    <!-- Mensajes rotativos del BroadcastReceiver de modo avión -->
+    <string-array name="airplane_mode_messages">
+        <item>¡Ni en el aire dejas de dar el espectáculo, eh! ✈️👑</item>
+        <item>Modo avión: porque hasta las reinas necesitan volar sin drama… mentira, el drama viaja contigo. ✈️</item>
+        <item>¿Modo avión? Cariño, tus rivales siguen en tierra cotilleando. No te desconectes mucho. 👀</item>
+        <item>¡Despegando con actitud! Que el avión tiemble ante tu presencia, reinona. 💅✈️</item>
+        <item>Modo avión activado. Tus enemigas aprovechan para hablar mal de ti. Solo un aviso. ☕</item>
+    </string-array>
+</resources>
+

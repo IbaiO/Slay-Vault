@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Language selector options — names stay as-is in all locales -->
+    <string-array name="language_entries">
+        <item>Español</item>
+        <item>English</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>es</item>
+        <item>en</item>
+    </string-array>
+
+    <!-- Rotating messages for the airplane-mode BroadcastReceiver -->
+    <string-array name="airplane_mode_messages">
+        <item>You can\'t even go offline without making a scene, can you! ✈️👑</item>
+        <item>Airplane mode: even queens need to fly drama-free… just kidding, the drama travels with you. ✈️</item>
+        <item>Airplane mode? Honey, your rivals are still on the ground gossiping. Don\'t disconnect for too long. 👀</item>
+        <item>Taking off with attitude! Let the plane tremble before your presence, queen. 💅✈️</item>
+        <item>Airplane mode on. Your enemies are seizing the moment to talk behind your back. Just a heads-up. ☕</item>
+    </string-array>
+</resources>
+

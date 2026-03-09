@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Categoría de Idioma -->
+    <PreferenceCategory
+        android:key="language"
+        android:title="@string/language_category">
+
+        <ListPreference
+            android:key="app_language"
+            android:title="@string/language"
+            android:summary="%s"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:defaultValue="es"
+            app:icon="@android:drawable/ic_menu_compass" />
+
+    </PreferenceCategory>
+
+    <!-- Categoría de Apariencia -->
+    <PreferenceCategory
+        android:key="appearance"
+        android:title="@string/appearance">
+
+        <SwitchPreferenceCompat
+            android:key="diva_mode"
+            android:title="@string/diva_mode"
+            android:summary="@string/diva_mode_summary"
+            android:defaultValue="false"
+            app:icon="@android:drawable/star_big_on" />
+
+
+    </PreferenceCategory>
+
+    <!-- Categoría de Notificaciones -->
+    <PreferenceCategory
+        android:key="notifications"
+        android:title="@string/notifications">
+
+        <SwitchPreferenceCompat
+            android:key="enable_notifications"
+            android:title="@string/enable_notifications"
+            android:summary="@string/enable_notifications_summary"
+            android:defaultValue="true"
+            app:icon="@android:drawable/ic_dialog_info" />
+
+    </PreferenceCategory>
+
+    <!-- Categoría de Información -->
+    <PreferenceCategory
+        android:key="info"
+        android:title="@string/about">
+
+        <Preference
+            android:key="version"
+            android:title="@string/version"
+            android:summary="1.0" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
+

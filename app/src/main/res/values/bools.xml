@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Indica si estamos en modo dual-pane (dos paneles simultáneos) -->
+    <bool name="is_dual_pane">false</bool>
+</resources>
+

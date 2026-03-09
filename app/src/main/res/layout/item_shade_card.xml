@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shade_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true"
+    app:rippleColor="?attr/colorSecondary">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header del shade con icono y fecha -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Icono del shade (según categoría) -->
+            <ImageView
+                android:id="@+id/shade_category_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/shade_category"
+                android:tint="?attr/colorPrimary"
+                tools:src="@android:drawable/ic_dialog_info" />
+
+            <!-- Categoría del shade -->
+            <TextView
+                android:id="@+id/shade_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                tools:text="Comentario Shady" />
+
+            <!-- Fecha del shade -->
+            <TextView
+                android:id="@+id/shade_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="05/03/2026" />
+
+        </LinearLayout>
+
+        <!-- Título/Resumen del shade -->
+        <TextView
+            android:id="@+id/shade_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            tools:text="La actitud en el último evento" />
+
+        <!-- Descripción del shade -->
+        <TextView
+            android:id="@+id/shade_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            tools:text="En el evento de anoche, su outfit era... interesante. Definitivamente una elección audaz que no todos entenderían. ☕" />
+
+        <!-- RatingBar para nivel de shade (qué tan fuerte es) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shade_intensity_label"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <RatingBar
+                android:id="@+id/shade_intensity_rating"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:rating="3"
+                android:stepSize="1"
+                tools:rating="3" />
+
+        </LinearLayout>
+
+        <!-- Footer con tags/etiquetas opcionales -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/shade_tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:chipSpacingHorizontal="4dp"
+            app:singleLine="true">
+
+            <!-- Los chips se añadirán dinámicamente desde el código -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/tag_example"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="outfit"
+                android:textSize="11sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+

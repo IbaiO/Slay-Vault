@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/queen_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true"
+    app:rippleColor="?attr/colorPrimary">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Foto de la rival (ImageView circular) -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/queen_photo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="@string/queen_avatar"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircularImageView"
+            app:strokeColor="?attr/colorPrimary"
+            app:strokeWidth="2dp"
+            tools:src="@tools:sample/avatars" />
+
+        <!-- Nombre de la rival -->
+        <TextView
+            android:id="@+id/queen_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/queen_photo"
+            app:layout_constraintTop_toTopOf="@id/queen_photo"
+            tools:text="RuPaul Charles" />
+
+        <!-- Descripción breve de la rival -->
+        <TextView
+            android:id="@+id/queen_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/queen_photo"
+            app:layout_constraintTop_toBottomOf="@id/queen_name"
+            tools:text="Drag superstar y presentadora icónica" />
+
+        <!-- RatingBar para nivel de envidia -->
+        <RatingBar
+            android:id="@+id/queen_envy_rating"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:isIndicator="false"
+            android:numStars="5"
+            android:rating="4.5"
+            android:stepSize="0.5"
+            app:layout_constraintStart_toEndOf="@id/queen_photo"
+            app:layout_constraintTop_toBottomOf="@id/queen_description"
+            tools:rating="4" />
+
+        <!-- Etiqueta del RatingBar -->
+        <TextView
+            android:id="@+id/envy_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/envy_level"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            app:layout_constraintBottom_toBottomOf="@id/queen_envy_rating"
+            app:layout_constraintStart_toEndOf="@id/queen_envy_rating"
+            app:layout_constraintTop_toTopOf="@id/queen_envy_rating" />
+
+        <!-- Badge con cantidad de shades -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/shades_count_badge"
+            style="@style/Widget.Material3.Chip.Assist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="false"
+            tools:text="3 shades"
+            android:textSize="12sp"
+            app:chipIcon="@android:drawable/ic_menu_info_details"
+            app:chipIconSize="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/queen_photo" />
+
+        <!-- Indicador de fecha -->
+        <TextView
+            android:id="@+id/last_shade_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            app:layout_constraintBottom_toBottomOf="@id/shades_count_badge"
+            app:layout_constraintStart_toEndOf="@id/shades_count_badge"
+            app:layout_constraintTop_toTopOf="@id/shades_count_badge"
+            tools:text="Hace 2 días" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
+

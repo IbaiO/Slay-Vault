@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme: estética fucsia por defecto -->
     <style name="Base.Theme.SlayVault" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/diva_fuchsia</item>
+        <item name="colorPrimaryDark">@color/diva_fuchsia_dark</item>
+        <item name="colorPrimaryContainer">@color/diva_fuchsia_container</item>
+        <item name="colorOnPrimary">@color/diva_on_fuchsia</item>
+        <item name="android:colorBackground">@color/diva_background</item>
+        <item name="android:windowBackground">@color/diva_background</item>
+        <!-- Popup menus (menú de ordenación) con fondo blanco y texto legible -->
+        <item name="popupMenuStyle">@style/SlayVault.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/SlayVault.PopupMenu</item>
     </style>
 
     <style name="Theme.SlayVault" parent="Base.Theme.SlayVault" />
+
+    <!-- Modo Diva Total: mismo tema visual, lenguaje drag queen activado por preferencia -->
+    <style name="Theme.SlayVault.DivaMode" parent="Base.Theme.SlayVault" />
 </resources>

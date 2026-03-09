@@ -3,32 +3,28 @@ plugins {
 }
 
 android {
-    namespace 'com.example.slay_vault'
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    namespace = 'com.example.slay_vault'
+    compileSdk = 36
 
     defaultConfig {
-        applicationId "com.example.slay_vault"
-        minSdk 29
-        targetSdk 36
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.slay_vault"
+        minSdk = 29
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
@@ -37,6 +33,25 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+
+    // Navigation Component
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
+
+    // RecyclerView y CardView
+    implementation libs.recyclerview
+    implementation libs.cardview
+
+    // Room Database
+    implementation libs.room.runtime
+    annotationProcessor libs.room.compiler
+
+    // Preference (SharedPreferences)
+    implementation libs.preference
+
+    // Gson para serialización JSON
+    implementation libs.gson
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

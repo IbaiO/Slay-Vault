@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- IDs personalizados para navegación y componentes -->
+    <item name="queens_list_container" type="id" />
+    <item name="shady_details_container" type="id" />
+</resources>
+

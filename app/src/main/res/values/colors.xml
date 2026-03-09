@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Paleta Diva -->
+    <color name="diva_fuchsia">#FFFF1493</color>
+    <color name="diva_fuchsia_dark">#FFC2006E</color>
+    <color name="diva_fuchsia_container">#FFFFE0F0</color>
+    <color name="diva_on_fuchsia">#FFFFFFFF</color>
+    <color name="diva_background">#FFFFF0F5</color>
 </resources>

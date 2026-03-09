@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Ordenar lista -->
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="@string/sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sort_by_name"
+                android:title="@string/sort_by_name" />
+            <item
+                android:id="@+id/sort_by_envy"
+                android:title="@string/sort_by_envy" />
+            <item
+                android:id="@+id/sort_by_shades"
+                android:title="@string/sort_by_shades" />
+            <item
+                android:id="@+id/sort_by_date"
+                android:title="@string/sort_by_date" />
+        </menu>
+    </item>
+
+</menu>

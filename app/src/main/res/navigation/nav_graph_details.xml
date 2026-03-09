@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_details"
+    app:startDestination="@id/placeholderFragment">
+
+    <!-- Fragment placeholder inicial (cuando no hay shade seleccionado) -->
+    <fragment
+        android:id="@+id/placeholderFragment"
+        android:name="com.example.slay_vault.ui.fragments.PlaceholderFragment"
+        android:label="Selecciona un Shade"
+        tools:layout="@layout/fragment_placeholder" />
+
+    <!-- Fragment de detalles del shade para modo dual-pane -->
+    <fragment
+        android:id="@+id/shadyDetailsFragment"
+        android:name="com.example.slay_vault.ui.fragments.ShadyDetailsFragment"
+        android:label="Detalles del Shade"
+        tools:layout="@layout/fragment_shady_details">
+        <argument
+            android:name="shady_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <!-- Fragment de ajustes también puede aparecer aquí -->
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.slay_vault.ui.fragments.SettingsFragment"
+        android:label="Ajustes"
+        tools:layout="@layout/fragment_settings" />
+
+</navigation>
+
