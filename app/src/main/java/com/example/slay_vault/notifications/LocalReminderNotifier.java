@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.example.slay_vault.MainActivity;
 import com.example.slay_vault.R;
@@ -24,6 +25,7 @@ public final class LocalReminderNotifier {
 
     public static final String CHANNEL_ID       = "slayvault_show_reminders";
     public static final String CHANNEL_CRUD_ID  = "slayvault_crud_events";
+    public static final String PREF_ENABLE_NOTIFICATIONS = "enable_notifications";
 
     private static final int SHOW_REMINDER_NOTIFICATION_ID = 1001;
     private static final int CRUD_NOTIFICATION_ID          = 1002;
@@ -60,7 +62,7 @@ public final class LocalReminderNotifier {
     @SuppressLint("MissingPermission")
     public static void showMakeupReminder(@NonNull Context context) {
         createChannel(context);
-        if (!hasPermission(context)) return;
+        if (!areNotificationsEffectivelyEnabled(context)) return;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification_makeup)
@@ -121,7 +123,7 @@ public final class LocalReminderNotifier {
     @SuppressLint("MissingPermission")
     private static void postCrud(@NonNull Context context, String title, String body) {
         createChannel(context);
-        if (!hasPermission(context)) return;
+        if (!areNotificationsEffectivelyEnabled(context)) return;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_CRUD_ID)
                 .setSmallIcon(R.drawable.ic_notification_makeup)
@@ -135,12 +137,18 @@ public final class LocalReminderNotifier {
         NotificationManagerCompat.from(context).notify(CRUD_NOTIFICATION_ID, builder.build());
     }
 
-    private static boolean hasPermission(@NonNull Context context) {
+    public static boolean hasPermission(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED;
         }
         return true;
+    }
+
+    public static boolean areNotificationsEffectivelyEnabled(@NonNull Context context) {
+        boolean userEnabled = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(PREF_ENABLE_NOTIFICATIONS, true);
+        return userEnabled && NotificationManagerCompat.from(context).areNotificationsEnabled() && hasPermission(context);
     }
 
     private static PendingIntent openAppIntent(@NonNull Context context) {

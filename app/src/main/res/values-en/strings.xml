@@ -108,6 +108,10 @@
     <string name="notification_enabled_toast">Notifications enabled.</string>
     <string name="notification_disabled_toast">Notifications disabled.</string>
     <string name="notification_permission_denied">Without permission we can\'t send you reminders.</string>
+    <string name="notification_disabled_dialog_title">Notifications are disabled</string>
+    <string name="notification_disabled_dialog_message">Notifications are disabled. Do you want to enable them?</string>
+    <string name="notification_disabled_dialog_positive">Enable</string>
+    <string name="notification_disabled_dialog_negative">Cancel</string>
 
     <!-- CRUD notifications -->
     <string name="notification_crud_channel_name">Vault Activity</string>

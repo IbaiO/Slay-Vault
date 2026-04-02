@@ -126,6 +126,10 @@
     <string name="notification_enabled_toast">Notificaciones activadas.</string>
     <string name="notification_disabled_toast">Notificaciones desactivadas.</string>
     <string name="notification_permission_denied">Sin permiso no podemos enviarte recordatorios.</string>
+    <string name="notification_disabled_dialog_title">Notificaciones desactivadas</string>
+    <string name="notification_disabled_dialog_message">Las notificaciones están desactivadas. ¿Quieres activarlas?</string>
+    <string name="notification_disabled_dialog_positive">Activar</string>
+    <string name="notification_disabled_dialog_negative">Cancelar</string>
 
     <!-- Notificaciones CRUD -->
     <string name="notification_crud_channel_name">Actividad del Vault</string>

@@ -90,6 +90,30 @@ public class DivaStrings {
                 : ctx.getString(R.string.notification_makeup_body);
     }
 
+    public static String notificationsDisabledDialogTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Aviso al camerino"
+                : ctx.getString(R.string.notification_disabled_dialog_title);
+    }
+
+    public static String notificationsDisabledDialogMessage(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Sin notificaciones no hay rama, reinona. ¿Quieres activarlas ahora?"
+                : ctx.getString(R.string.notification_disabled_dialog_message);
+    }
+
+    public static String notificationsDisabledDialogPositive(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Activalas ya 💅"
+                : ctx.getString(R.string.notification_disabled_dialog_positive);
+    }
+
+    public static String notificationsDisabledDialogNegative(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Paso por ahora"
+                : ctx.getString(R.string.notification_disabled_dialog_negative);
+    }
+
     // Notificaciones de eventos CRUD
 
     public static String notifQueenCreatedTitle(Context ctx) {

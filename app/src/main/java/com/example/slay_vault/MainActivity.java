@@ -1,7 +1,9 @@
 package com.example.slay_vault;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -12,11 +14,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -68,6 +72,17 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                     });
+
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                setNotificationsPreferenceEnabled(isGranted);
+                if (isGranted) {
+                    LocalReminderNotifier.showMakeupReminder(this);
+                    Toast.makeText(this, R.string.notification_enabled_toast, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.notification_permission_denied, Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_export) {
                 exportLauncher.launch(DivaStrings.exportDefaultFilename(this));
             } else if (id == R.id.nav_notification_test) {
-                LocalReminderNotifier.showMakeupReminder(this);
+                handleNotificationTestAction();
             }
 
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -227,5 +242,36 @@ public class MainActivity extends AppCompatActivity {
                     || super.onSupportNavigateUp();
         }
         return super.onSupportNavigateUp();
+    }
+
+    private void handleNotificationTestAction() {
+        if (LocalReminderNotifier.areNotificationsEffectivelyEnabled(this)) {
+            LocalReminderNotifier.showMakeupReminder(this);
+            Toast.makeText(this, R.string.notification_test_sent, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(DivaStrings.notificationsDisabledDialogTitle(this))
+                .setMessage(DivaStrings.notificationsDisabledDialogMessage(this))
+                .setPositiveButton(DivaStrings.notificationsDisabledDialogPositive(this), (dialog, which) -> {
+                    setNotificationsPreferenceEnabled(true);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && !LocalReminderNotifier.hasPermission(this)) {
+                        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                    } else {
+                        LocalReminderNotifier.showMakeupReminder(this);
+                        Toast.makeText(this, R.string.notification_test_sent, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(DivaStrings.notificationsDisabledDialogNegative(this), null)
+                .show();
+    }
+
+    private void setNotificationsPreferenceEnabled(boolean enabled) {
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean(LocalReminderNotifier.PREF_ENABLE_NOTIFICATIONS, enabled)
+                .apply();
     }
 }

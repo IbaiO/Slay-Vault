@@ -1,7 +1,7 @@
 package com.example.slay_vault.ui.fragments;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -24,18 +23,27 @@ import com.example.slay_vault.ui.DivaStrings;
 // Fragment que muestra los ajustes de la aplicación (Diva Settings).
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    private static final String KEY_ENABLE_NOTIFICATIONS = "enable_notifications";
+    private static final String KEY_ENABLE_NOTIFICATIONS = LocalReminderNotifier.PREF_ENABLE_NOTIFICATIONS;
     public static final String KEY_DIVA_MODE = "diva_mode";
     private static final String KEY_LANGUAGE = "app_language";
 
     private SwitchPreferenceCompat notificationsSwitch;
+    private final SharedPreferences.OnSharedPreferenceChangeListener notificationPrefListener =
+            (sharedPreferences, key) -> {
+                if (!KEY_ENABLE_NOTIFICATIONS.equals(key) || !isAdded()) {
+                    return;
+                }
+                syncNotificationSwitchState();
+            };
+
     private final ActivityResultLauncher<String> notificationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (!isAdded() || notificationsSwitch == null) {
                     return;
                 }
 
-                notificationsSwitch.setChecked(isGranted);
+                setNotificationsPreferenceEnabled(isGranted);
+                syncNotificationSwitchState();
                 if (isGranted) {
                     LocalReminderNotifier.showMakeupReminder(requireContext());
                     Toast.makeText(requireContext(), R.string.notification_enabled_toast, Toast.LENGTH_SHORT).show();
@@ -91,21 +99,34 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onResume() {
         super.onResume();
+        syncNotificationSwitchState();
+    }
 
-        if (notificationsSwitch != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            notificationsSwitch.setChecked(hasNotificationPermission());
-        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .registerOnSharedPreferenceChangeListener(notificationPrefListener);
+        syncNotificationSwitchState();
+    }
+
+    @Override
+    public void onStop() {
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .unregisterOnSharedPreferenceChangeListener(notificationPrefListener);
+        super.onStop();
     }
 
     private boolean onNotificationsPreferenceChanged(Preference preference, Object newValue) {
         boolean enableRequested = Boolean.TRUE.equals(newValue);
+        setNotificationsPreferenceEnabled(enableRequested);
 
         if (!enableRequested) {
             Toast.makeText(requireContext(), R.string.notification_disabled_toast, Toast.LENGTH_SHORT).show();
             return true;
         }
 
-        if (!hasNotificationPermission()) {
+        if (!LocalReminderNotifier.hasPermission(requireContext())) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
@@ -133,14 +154,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         return true;
     }
 
-    private boolean hasNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            return true;
-        }
+    private void setNotificationsPreferenceEnabled(boolean enabled) {
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .edit()
+                .putBoolean(KEY_ENABLE_NOTIFICATIONS, enabled)
+                .apply();
+    }
 
-        return ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED;
+    // Mantiene el estado visual del switch alineado con permisos + preferencia real.
+    private void syncNotificationSwitchState() {
+        if (!isAdded() || notificationsSwitch == null) {
+            return;
+        }
+        notificationsSwitch.setChecked(LocalReminderNotifier.areNotificationsEffectivelyEnabled(requireContext()));
     }
 }
