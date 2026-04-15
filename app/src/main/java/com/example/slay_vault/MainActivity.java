@@ -157,7 +157,9 @@ public class MainActivity extends AppCompatActivity {
         NavController drawerNavController = (navController != null) ? navController : detailsNavController;
         if (drawerNavController != null) {
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.queensListFragment, R.id.settingsFragment)
+                    R.id.queensListFragment,
+                    R.id.settingsFragment,
+                    R.id.shadyDetailsFragment)
                     .setOpenableLayout(drawerLayout)
                     .build();
             if (getSupportActionBar() != null) {
@@ -370,7 +372,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (navController != null) {
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.queensListFragment, R.id.settingsFragment)
+                    R.id.queensListFragment,
+                    R.id.settingsFragment,
+                    R.id.shadyDetailsFragment)
                     .setOpenableLayout(drawerLayout)
                     .build();
             return NavigationUI.navigateUp(navController, appBarConfiguration)

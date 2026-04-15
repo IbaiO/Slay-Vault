@@ -56,7 +56,7 @@
     <fragment
         android:id="@+id/shadyDetailsFragment"
         android:name="com.example.slay_vault.ui.fragments.ShadyDetailsFragment"
-        android:label="@string/shade_details"
+        android:label="@string/queen_details"
         tools:layout="@layout/fragment_shady_details">
         <argument
             android:name="shady_id"
