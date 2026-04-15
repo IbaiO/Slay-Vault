@@ -10,7 +10,7 @@
 
     <!-- Contenido principal: dual-pane landscape -->
     <LinearLayout
-        android:id="@+id/main"
+        android:id="@+id/main_land"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -34,13 +34,15 @@
             android:orientation="horizontal"
             android:baselineAligned="false">
 
-            <!-- Panel izquierdo: Lista de Queens (40% del ancho) -->
+            <!-- Panel izquierdo: NavHost principal (misma id que portrait para restauracion segura) -->
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/queens_list_container"
-                android:name="com.example.slay_vault.ui.fragments.QueensListFragment"
+                android:id="@+id/nav_host_fragment_main"
+                android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/nav_graph"
                 tools:layout="@layout/fragment_queens_list" />
 
             <!-- Divisor vertical -->
@@ -51,12 +53,11 @@
 
             <!-- Panel derecho: Detalles del Shade (60% del ancho) -->
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/shady_details_container"
+                android:id="@+id/nav_host_fragment_detail"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
-                app:defaultNavHost="true"
                 app:navGraph="@navigation/nav_graph_details"
                 tools:layout="@layout/fragment_shady_details" />
 

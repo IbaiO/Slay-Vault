@@ -21,4 +21,6 @@
     <style name="SlayVault.PopupMenu.ItemText" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
         <item name="android:textColor">@color/black</item>
     </style>
+
+    <style name="SlayVault.Chip.TagText" parent="TextAppearance.Material3.LabelSmall" />
 </resources>
