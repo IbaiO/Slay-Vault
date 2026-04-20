@@ -9,9 +9,24 @@
             android:title="@string/queens_list" />
 
         <item
+            android:id="@+id/nav_show_timer"
+            android:icon="@android:drawable/ic_lock_idle_alarm"
+            android:title="@string/show_timer" />
+
+        <item
             android:id="@+id/nav_settings"
             android:icon="@android:drawable/ic_menu_preferences"
             android:title="@string/settings" />
+
+        <item
+            android:id="@+id/nav_shade_map"
+            android:icon="@android:drawable/ic_menu_mapmode"
+            android:title="@string/shade_map_title" />
+
+        <item
+            android:id="@+id/nav_global_shout"
+            android:icon="@android:drawable/ic_dialog_email"
+            android:title="@string/global_shout_title" />
 
     </group>
 

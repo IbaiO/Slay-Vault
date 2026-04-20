@@ -17,12 +17,14 @@ public class QueenMapper {
 
         Queen queen = new Queen();
         queen.setId(entity.getId());
+        queen.setUserId(entity.getUserId());
         queen.setName(entity.getName());
         queen.setDescription(entity.getDescription());
         queen.setPhotoUri(entity.getPhotoUri());
         queen.setEnvyLevel(entity.getEnvyLevel());
         queen.setShadesCount(entity.getShadesCount());
         queen.setLastShadeDate(entity.getLastShadeDate());
+        queen.setSongId(entity.getSongId());
         queen.setCreatedAt(entity.getCreatedAt());
         queen.setUpdatedAt(entity.getUpdatedAt());
 
@@ -37,12 +39,14 @@ public class QueenMapper {
 
         QueenEntity entity = new QueenEntity();
         entity.setId(queen.getId());
+        entity.setUserId(queen.getUserId());
         entity.setName(queen.getName());
         entity.setDescription(queen.getDescription());
         entity.setPhotoUri(queen.getPhotoUri());
         entity.setEnvyLevel(queen.getEnvyLevel());
         entity.setShadesCount(queen.getShadesCount());
         entity.setLastShadeDate(queen.getLastShadeDate());
+        entity.setSongId(queen.getSongId());
         entity.setCreatedAt(queen.getCreatedAt());
         entity.setUpdatedAt(queen.getUpdatedAt());
 
@@ -62,4 +66,3 @@ public class QueenMapper {
         return queens;
     }
 }
-

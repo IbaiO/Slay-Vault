@@ -72,7 +72,7 @@ public class ShadeBookExporter {
             boolean hasBlock = false;
             StringBuilder block = new StringBuilder();
             block.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            block.append("👑 ").append(queen.getName()).append("\n");
+            block.append(" ").append(queen.getName()).append("\n");
             block.append(String.format(Locale.getDefault(),
                     "   Nivel de envidia: %.1f/5\n", queen.getEnvyLevel()));
             block.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
@@ -80,7 +80,7 @@ public class ShadeBookExporter {
             for (Shade shade : allShades) {
                 if (queen.getId().equals(shade.getQueenId())) {
                     hasBlock = true;
-                    block.append("  📌 ").append(shade.getTitle()).append("\n");
+                    block.append("   ").append(shade.getTitle()).append("\n");
                     if (shade.getCategory() != null && !shade.getCategory().isEmpty()) {
                         block.append("     Categoría: ").append(shade.getCategory()).append("\n");
                     }
@@ -104,7 +104,7 @@ public class ShadeBookExporter {
         }
 
         sb.append("\n═══════════════════════════════════════\n");
-        sb.append("    Generado con SlayVault 💅\n");
+        sb.append("    Generado con SlayVault \n");
         sb.append("═══════════════════════════════════════\n");
 
         return sb.toString();

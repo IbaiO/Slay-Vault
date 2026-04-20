@@ -29,6 +29,7 @@ public final class LocalReminderNotifier {
 
     private static final int SHOW_REMINDER_NOTIFICATION_ID = 1001;
     private static final int CRUD_NOTIFICATION_ID          = 1002;
+    private static final int TEA_REMINDER_NOTIFICATION_ID  = 1003;
 
     private LocalReminderNotifier() { }
 
@@ -78,42 +79,60 @@ public final class LocalReminderNotifier {
         NotificationManagerCompat.from(context).notify(SHOW_REMINDER_NOTIFICATION_ID, builder.build());
     }
 
-    // Notifica que se ha creado una queen
+    @SuppressLint("MissingPermission")
+    public static void showTeaReminder(@NonNull Context context) {
+        createChannel(context);
+        if (!areNotificationsEffectivelyEnabled(context)) return;
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification_makeup)
+                .setContentTitle(DivaStrings.teaReminderNotificationTitle(context))
+                .setContentText(DivaStrings.teaReminderNotificationBody(context))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(DivaStrings.teaReminderNotificationBody(context)))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setContentIntent(openAppIntent(context));
+
+        NotificationManagerCompat.from(context).notify(TEA_REMINDER_NOTIFICATION_ID, builder.build());
+    }
+
+    // Notificación CRUD: queen creada.
     public static void notifyQueenCreated(@NonNull Context context, @NonNull String queenName) {
         postCrud(context,
                 DivaStrings.notifQueenCreatedTitle(context),
                 DivaStrings.notifQueenCreatedBody(context, queenName));
     }
 
-    // Notifica que se ha editado una queen
+    // Notificación CRUD: queen actualizada.
     public static void notifyQueenUpdated(@NonNull Context context, @NonNull String queenName) {
         postCrud(context,
                 DivaStrings.notifQueenUpdatedTitle(context),
                 DivaStrings.notifQueenUpdatedBody(context, queenName));
     }
 
-    // Notifica que se ha eliminado una queen
+    // Notificación CRUD: queen eliminada.
     public static void notifyQueenDeleted(@NonNull Context context, @NonNull String queenName) {
         postCrud(context,
                 DivaStrings.notifQueenDeletedTitle(context),
                 DivaStrings.notifQueenDeletedBody(context, queenName));
     }
 
-    // Notifica que se ha añadido un shade
+    // Notificación CRUD: shade creado.
     public static void notifyShadeCreated(@NonNull Context context, @NonNull String shadeTitle) {
         postCrud(context,
                 DivaStrings.notifShadeCreatedTitle(context),
                 DivaStrings.notifShadeCreatedBody(context, shadeTitle));
     }
 
-    // Notifica que se ha editado un shade
+    // Notificación CRUD: shade actualizado.
     public static void notifyShadeUpdated(@NonNull Context context, @NonNull String shadeTitle) {
         postCrud(context,
                 DivaStrings.notifShadeUpdatedTitle(context),
                 DivaStrings.notifShadeUpdatedBody(context, shadeTitle));
     }
 
-    // Notifica que se ha eliminado un shade
+    // Notificación CRUD: shade eliminado.
     public static void notifyShadeDeleted(@NonNull Context context, @NonNull String shadeTitle) {
         postCrud(context,
                 DivaStrings.notifShadeDeletedTitle(context),

@@ -6,22 +6,25 @@ import java.util.Date;
 public class Queen {
 
     private String id;
+    private String userId;
     private String name;
     private String description;
     private String photoUri;
     private float envyLevel; // Nivel de envidia (0-5 estrellas)
     private int shadesCount = 0;
     private String lastShadeDate = null;
+    private Long songId;
     private Date createdAt;
     private Date updatedAt;
 
-    // Constructor vacío requerido por Room
+    // Constructor vacío
     public Queen() {
     }
 
     // Constructor principal: createdAt y updatedAt se asignan con la fecha actual
-    public Queen(String id, String name, String description, String photoUri, float envyLevel) {
+    public Queen(String id, String userId, String name, String description, String photoUri, float envyLevel) {
         this.id = id;
+        this.userId = userId;
         this.name = name;
         this.description = description;
         this.photoUri = photoUri;
@@ -31,8 +34,9 @@ public class Queen {
     }
 
     // Constructor con fechas explícitas (para datos de muestra hardcodeados)
-    public Queen(String id, String name, String description, String photoUri, float envyLevel, Date createdAt, Date updatedAt) {
+    public Queen(String id, String userId, String name, String description, String photoUri, float envyLevel, Date createdAt, Date updatedAt) {
         this.id = id;
+        this.userId = userId;
         this.name = name;
         this.description = description;
         this.photoUri = photoUri;
@@ -48,6 +52,14 @@ public class Queen {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -98,6 +110,14 @@ public class Queen {
         this.lastShadeDate = lastShadeDate;
     }
 
+    public Long getSongId() {
+        return songId;
+    }
+
+    public void setSongId(Long songId) {
+        this.songId = songId;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -119,10 +139,10 @@ public class Queen {
     public String toString() {
         return "Queen{" +
                 "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
                 ", name='" + name + '\'' +
                 ", envyLevel=" + envyLevel +
                 ", shadesCount=" + shadesCount +
                 '}';
     }
 }
-

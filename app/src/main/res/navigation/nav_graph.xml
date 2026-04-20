@@ -30,6 +30,28 @@
         app:popEnterAnim="@anim/slide_in_left"
         app:popExitAnim="@anim/slide_out_right" />
 
+    <action
+        android:id="@+id/action_global_to_showTimer"
+        app:destination="@id/showTimerFragment"
+        app:popUpTo="@id/queensListFragment"
+        app:popUpToInclusive="false"
+        app:launchSingleTop="true"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right" />
+
+    <action
+        android:id="@+id/action_global_to_globalShout"
+        app:destination="@id/gritoDiaFragment"
+        app:popUpTo="@id/queensListFragment"
+        app:popUpToInclusive="false"
+        app:launchSingleTop="true"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right" />
+
     <!-- Fragment principal: Lista de Rivales -->
     <fragment
         android:id="@+id/queensListFragment"
@@ -56,7 +78,7 @@
     <fragment
         android:id="@+id/shadyDetailsFragment"
         android:name="com.example.slay_vault.ui.fragments.ShadyDetailsFragment"
-        android:label="@string/queen_details"
+        android:label="@string/shade_details"
         tools:layout="@layout/fragment_shady_details">
         <argument
             android:name="shady_id"
@@ -80,6 +102,18 @@
             app:popUpTo="@id/queensListFragment"
             app:popUpToInclusive="false" />
     </fragment>
+
+    <fragment
+        android:id="@+id/showTimerFragment"
+        android:name="com.example.slay_vault.ui.fragments.ShowTimerFragment"
+        android:label="@string/show_timer"
+        tools:layout="@layout/fragment_show_timer" />
+
+    <fragment
+        android:id="@+id/gritoDiaFragment"
+        android:name="com.example.slay_vault.ui.fragments.GritoDiaFragment"
+        android:label="@string/global_shout_title"
+        tools:layout="@layout/fragment_global_shout" />
 
 </navigation>
 

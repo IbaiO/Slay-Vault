@@ -32,7 +32,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@string/shade_category"
-                android:tint="?attr/colorPrimary"
+                app:tint="?attr/colorPrimary"
                 tools:src="@android:drawable/ic_dialog_info" />
 
             <!-- Categoría del shade -->

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slay_vault.R;
 import com.example.slay_vault.data.models.Queen;
+import com.example.slay_vault.ui.utils.QueenPhotoLoader;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -30,7 +31,7 @@ public class QueensAdapter extends RecyclerView.Adapter<QueensAdapter.QueenViewH
     private List<Queen> queens;
     private OnQueenClickListener clickListener;
 
-    // Callback para clic simple y long click sobre una card
+    // Callbacks de click simple y largo.
     public interface OnQueenClickListener {
         void onQueenClick(Queen queen, int position);
         void onQueenLongClick(Queen queen, int position);
@@ -159,8 +160,6 @@ public class QueensAdapter extends RecyclerView.Adapter<QueensAdapter.QueenViewH
             lastShadeDate = itemView.findViewById(R.id.last_shade_date);
         }
 
-        // getIdentifier es intencional: el nombre del drawable viene de la BD y no puede resolverse en compilación
-        @SuppressWarnings("DiscouragedApi")
         public void bind(Queen queen, int position, OnQueenClickListener clickListener) {
             queenName.setText(queen.getName());
 
@@ -173,20 +172,7 @@ public class QueensAdapter extends RecyclerView.Adapter<QueensAdapter.QueenViewH
 
             queenEnvyRating.setRating(queen.getEnvyLevel());
 
-            if (queen.getPhotoUri() != null && !queen.getPhotoUri().isEmpty()) {
-                java.io.File file = new java.io.File(queen.getPhotoUri());
-                if (file.exists()) {
-                    queenPhoto.setImageURI(null);
-                    queenPhoto.setImageURI(android.net.Uri.fromFile(file));
-                } else {
-                    int resId = itemView.getContext().getResources().getIdentifier(
-                            queen.getPhotoUri(), "drawable",
-                            itemView.getContext().getPackageName());
-                    queenPhoto.setImageResource(resId != 0 ? resId : R.mipmap.ic_launcher);
-                }
-            } else {
-                queenPhoto.setImageResource(R.mipmap.ic_launcher);
-            }
+            QueenPhotoLoader.load(queenPhoto, queen.getPhotoUri(), R.mipmap.ic_launcher);
 
             int shadesCount = queen.getShadesCount();
             if (shadesCount == 0) {
@@ -217,7 +203,7 @@ public class QueensAdapter extends RecyclerView.Adapter<QueensAdapter.QueenViewH
             cardView.setCheckable(false);
         }
 
-        // Convierte fecha "dd/MM/yyyy" a texto relativo (Hoy, Ayer, Hace X días)
+        // Convierte fecha dd/MM/yyyy a texto relativo.
         private String formatRelativeDate(String dateString) {
             if (dateString == null || dateString.isEmpty()) return "";
             try {

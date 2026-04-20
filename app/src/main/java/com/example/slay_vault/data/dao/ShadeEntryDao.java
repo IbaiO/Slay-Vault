@@ -53,6 +53,10 @@ public interface ShadeEntryDao {
     @Query("DELETE FROM shade_entries WHERE queen_id = :queenId")
     void deleteAllByQueenId(String queenId);
 
+    // Eliminar todos los Shades de un usuario
+    @Query("DELETE FROM shade_entries WHERE user_id = :userId")
+    void deleteAllByUser(String userId);
+
     // Eliminar todos los Shades
     @Query("DELETE FROM shade_entries")
     void deleteAll();
@@ -61,17 +65,33 @@ public interface ShadeEntryDao {
     @Query("SELECT * FROM shade_entries WHERE queen_id = :queenId ORDER BY date DESC")
     LiveData<List<ShadeEntryEntity>> getShadesByQueenId(String queenId);
 
+    // Obtener todos los Shades de una Queen específica (LiveData) para un usuario específico
+    @Query("SELECT * FROM shade_entries WHERE queen_id = :queenId AND user_id = :userId ORDER BY date DESC")
+    LiveData<List<ShadeEntryEntity>> getShadesByQueenIdForUser(String queenId, String userId);
+
     // Obtener todos los Shades de una Queen (lista simple, sin LiveData)
     @Query("SELECT * FROM shade_entries WHERE queen_id = :queenId ORDER BY date DESC")
     List<ShadeEntryEntity> getShadesByQueenIdSync(String queenId);
+
+    // Obtener todos los Shades de una Queen (lista simple, sin LiveData) para un usuario específico
+    @Query("SELECT * FROM shade_entries WHERE queen_id = :queenId AND user_id = :userId ORDER BY date DESC")
+    List<ShadeEntryEntity> getShadesByQueenIdSyncForUser(String queenId, String userId);
 
     // Obtener un Shade por ID (LiveData)
     @Query("SELECT * FROM shade_entries WHERE id = :shadeId")
     LiveData<ShadeEntryEntity> getShadeById(String shadeId);
 
+    // Obtener un Shade por ID para un usuario específico (LiveData)
+    @Query("SELECT * FROM shade_entries WHERE id = :shadeId AND user_id = :userId")
+    LiveData<ShadeEntryEntity> getShadeByIdForUser(String shadeId, String userId);
+
     // Obtener un Shade por ID (sin LiveData)
     @Query("SELECT * FROM shade_entries WHERE id = :shadeId")
     ShadeEntryEntity getShadeByIdSync(String shadeId);
+
+    // Obtener un Shade por ID para un usuario específico (sin LiveData)
+    @Query("SELECT * FROM shade_entries WHERE id = :shadeId AND user_id = :userId")
+    ShadeEntryEntity getShadeByIdSyncForUser(String shadeId, String userId);
 
     // Obtener todos los Shades (LiveData)
     @Query("SELECT * FROM shade_entries ORDER BY date DESC")
@@ -80,6 +100,14 @@ public interface ShadeEntryDao {
     // Obtener todos los Shades (lista simple)
     @Query("SELECT * FROM shade_entries ORDER BY date DESC")
     List<ShadeEntryEntity> getAllShadesList();
+
+    // Obtener todos los Shades de un usuario específico (LiveData)
+    @Query("SELECT * FROM shade_entries WHERE user_id = :userId ORDER BY date DESC")
+    LiveData<List<ShadeEntryEntity>> getAllShadesByUser(String userId);
+
+    // Obtener todos los Shades de un usuario específico (lista simple, sin LiveData)
+    @Query("SELECT * FROM shade_entries WHERE user_id = :userId ORDER BY date DESC")
+    List<ShadeEntryEntity> getAllShadesListByUser(String userId);
 
     // Buscar Shades por título o descripción
     @Query("SELECT * FROM shade_entries WHERE title LIKE '%' || :searchQuery || '%' OR description LIKE '%' || :searchQuery || '%' ORDER BY date DESC")
@@ -158,4 +186,3 @@ public interface ShadeEntryDao {
            "GROUP BY category ORDER BY COUNT(*) DESC LIMIT 1")
     String getMostUsedCategoryByQueenSync(String queenId);
 }
-

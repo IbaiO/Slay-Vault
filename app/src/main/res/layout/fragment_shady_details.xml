@@ -203,6 +203,35 @@
                         app:iconGravity="start"
                         style="@style/Widget.Material3.Button.OutlinedButton" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_assign_anthem"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/assign_anthem"
+                            android:textAllCaps="false"
+                            app:icon="@android:drawable/ic_menu_add"
+                            app:iconGravity="start" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_play_anthem"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="@string/play_anthem"
+                            android:textAllCaps="false"
+                            app:icon="@android:drawable/ic_media_play"
+                            app:iconGravity="start" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

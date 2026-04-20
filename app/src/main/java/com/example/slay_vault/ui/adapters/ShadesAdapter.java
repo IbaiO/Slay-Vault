@@ -29,7 +29,7 @@ public class ShadesAdapter extends RecyclerView.Adapter<ShadesAdapter.ShadeViewH
     private List<Shade> shades;
     private OnShadeClickListener clickListener;
 
-    // Callback para clic simple y long click sobre una card
+    // Callbacks de click simple y largo.
     public interface OnShadeClickListener {
         void onShadeClick(Shade shade, int position);
         void onShadeLongClick(Shade shade, int position);
@@ -101,7 +101,7 @@ public class ShadesAdapter extends RecyclerView.Adapter<ShadesAdapter.ShadeViewH
         return shades.size();
     }
 
-    // ViewHolder que enlaza los datos de un Shade con las vistas
+    // ViewHolder de una card de shade.
     public static class ShadeViewHolder extends RecyclerView.ViewHolder {
 
         private final MaterialCardView cardView;
@@ -162,7 +162,7 @@ public class ShadesAdapter extends RecyclerView.Adapter<ShadesAdapter.ShadeViewH
             });
         }
 
-        // Devuelve un icono según la categoría
+        // Devuelve el icono de la categoria.
         private int getCategoryIcon(String category) {
             switch (category.toLowerCase()) {
                 case "outfit":
@@ -182,7 +182,7 @@ public class ShadesAdapter extends RecyclerView.Adapter<ShadesAdapter.ShadeViewH
             }
         }
 
-        // Crea un Chip para el tag
+        // Crea un chip para un tag.
         private Chip createTagChip(String tagText) {
             Chip chip = new Chip(itemView.getContext());
             chip.setText(tagText);
@@ -193,7 +193,7 @@ public class ShadesAdapter extends RecyclerView.Adapter<ShadesAdapter.ShadeViewH
             return chip;
         }
 
-        // Formatea una fecha a "dd/MM/yyyy"
+        // Formatea la fecha como dd/MM/yyyy.
         private String formatDate(Date date) {
             if (date == null) return "";
             return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);

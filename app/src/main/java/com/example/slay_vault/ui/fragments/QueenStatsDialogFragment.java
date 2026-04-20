@@ -12,10 +12,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.slay_vault.R;
+import com.example.slay_vault.data.auth.SessionManager;
 import com.example.slay_vault.data.dao.ShadeEntryDao;
 import com.example.slay_vault.data.database.SlayVaultDatabase;
 import com.example.slay_vault.data.entities.QueenEntity;
 import com.example.slay_vault.ui.DivaStrings;
+import com.example.slay_vault.ui.utils.QueenPhotoLoader;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.text.SimpleDateFormat;
@@ -65,20 +67,29 @@ public class QueenStatsDialogFragment extends DialogFragment {
                 .setText(DivaStrings.actionClose(requireContext()));
 
         String queenId = getArguments() != null ? getArguments().getString(ARG_QUEEN_ID) : null;
+        String userId = SessionManager.getUserId(requireContext());
 
-        if (queenId != null) {
+        if (queenId != null && userId != null && !userId.trim().isEmpty()) {
             SlayVaultDatabase.databaseExecutor.execute(() -> {
                 SlayVaultDatabase db = SlayVaultDatabase.getInstance(
                         requireContext().getApplicationContext());
 
-                QueenEntity entity = db.queenDao().getQueenByIdSync(queenId);
+                QueenEntity entity = db.queenDao().getQueenByIdSyncForUser(queenId, userId);
                 if (entity == null || !isAdded()) return;
 
                 ShadeEntryDao shadeDao = db.shadeEntryDao();
-                int count       = shadeDao.getShadesCountByQueenSync(queenId);
-                Float avgRaw    = shadeDao.getAverageIntensityByQueenSync(queenId);
-                float avg       = avgRaw != null ? avgRaw : 0f;
-                String favCat   = shadeDao.getMostUsedCategoryByQueenSync(queenId);
+                java.util.List<com.example.slay_vault.data.entities.ShadeEntryEntity> userShades =
+                        shadeDao.getShadesByQueenIdSyncForUser(queenId, userId);
+                int count = userShades != null ? userShades.size() : 0;
+                float avg = 0f;
+                if (count > 0) {
+                    float total = 0f;
+                    for (com.example.slay_vault.data.entities.ShadeEntryEntity item : userShades) {
+                        total += item.getIntensity();
+                    }
+                    avg = total / count;
+                }
+                String favCat = shadeDao.getMostUsedCategoryByQueenSync(queenId);
                 com.example.slay_vault.data.entities.ShadeEntryEntity lastShade =
                         shadeDao.getMostRecentShadeByQueenSync(queenId);
 
@@ -131,17 +142,7 @@ public class QueenStatsDialogFragment extends DialogFragment {
                         getDialog().setTitle(DivaStrings.dialogStatsTitle(requireContext(), entity.getName()));
                     }
 
-                    if (entity.getPhotoUri() != null && !entity.getPhotoUri().isEmpty()) {
-                        java.io.File file = new java.io.File(entity.getPhotoUri());
-                        if (file.exists()) {
-                            photo.setImageURI(android.net.Uri.fromFile(file));
-                        } else {
-                            int resId = requireContext().getResources().getIdentifier(
-                                    entity.getPhotoUri(), "drawable",
-                                    requireContext().getPackageName());
-                            photo.setImageResource(resId != 0 ? resId : R.mipmap.ic_launcher);
-                        }
-                    }
+                    QueenPhotoLoader.load(photo, entity.getPhotoUri(), R.mipmap.ic_launcher);
                 });
             });
         }

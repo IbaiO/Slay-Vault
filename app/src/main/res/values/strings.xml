@@ -1,14 +1,25 @@
 <resources>
     <string name="app_name">SlayVault</string>
-    <string name="drawer_subtitle">El registro de tus enemigas 👑</string>
     <string name="actions">Acciones</string>
-    <string name="test_notification">Probar notificación 🔔</string>
+    <string name="test_notification">Probar notificación </string>
+    <string name="action_show_timer_stop">Detener cronómetro de show</string>
+    <string name="show_timer_started">Cronómetro de show iniciado.</string>
+    <string name="show_timer_stopped">Cronómetro de show detenido.</string>
+    <string name="show_timer">Cronometrar show</string>
+    <string name="show_timer_title">Cronómetro de Show</string>
+    <string name="show_timer_hint">Controla el tiempo de actuación con precisión.</string>
+    <string name="show_timer_status_ready">Lista para empezar.</string>
+    <string name="show_timer_status_running">Cronómetro en marcha.</string>
+    <string name="show_timer_status_paused">Cronómetro pausado.</string>
+    <string name="timer_start">Iniciar</string>
+    <string name="timer_pause">Pausar</string>
+    <string name="timer_resume">Reanudar</string>
+    <string name="timer_reset">Reiniciar</string>
     <string name="open_drawer">Abrir menú</string>
     <string name="close_drawer">Cerrar menú</string>
 
     <!-- Navigation -->
     <string name="settings">Ajustes</string>
-    <string name="back">Atrás</string>
 
     <!-- Queens List Fragment -->
     <string name="queens_list">Rivales</string>
@@ -17,8 +28,8 @@
     <string name="queen_avatar">Avatar de la rival</string>
 
     <!-- Shady Details Fragment -->
-    <string name="queen_details">Detalles de la rival</string>
     <string name="shade_category">Categoría del Shade</string>
+    <string name="shade_details">Detalles del Shade</string>
 
     <!-- Card Items -->
     <string name="envy_level">Nivel de Envidia</string>
@@ -40,8 +51,7 @@
     <string name="action_close">Cerrar</string>
     <string name="queen_deleted">%1$s eliminada</string>
     <string name="shade_deleted">Shade eliminado</string>
-    <string name="shade_shared_toast">Compartir shade</string>
-    <string name="shade_share_footer">Shade sobre %1$s — SlayVault 👑</string>
+    <string name="shade_share_footer">Shade sobre %1$s — SlayVault </string>
     <string name="queen_stats_toast">Estadísticas de %1$s</string>
     <string name="stats_total_shades">Shades lanzados</string>
     <string name="stats_avg_intensity">Intensidad media</string>
@@ -60,18 +70,23 @@
 
     <!-- Settings Fragment -->
     <string name="appearance">Apariencia</string>
-    <string name="diva_mode">Modo Diva Total 💅</string>
+    <string name="diva_mode">Modo Diva Total </string>
     <string name="diva_mode_summary">Activa el lenguaje drag queen en toda la app. Porque "Aceptar" es para las normales.</string>
     <string name="notifications">Notificaciones</string>
     <string name="enable_notifications">Habilitar Notificaciones</string>
     <string name="enable_notifications_summary">Recibir recordatorios para maquillarte antes del show</string>
     <string name="about">Acerca de</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="logout_summary">Salir de tu cuenta y volver al acceso</string>
+    <string name="logout_confirm_title">Cerrar sesión</string>
+    <string name="logout_confirm_message">¿Seguro que quieres cerrar sesión?</string>
+    <string name="logout_confirm_positive">Sí, cerrar</string>
+    <string name="logout_confirm_negative">Cancelar</string>
     <string name="version">Versión</string>
 
     <!-- Preferencia de idioma -->
     <string name="language_category">Idioma / Language</string>
     <string name="language">Idioma de la aplicación</string>
-    <string name="language_summary">Elige el idioma de la app</string>
 
     <!-- Dialogo gamberro de borrado -->
     <string name="dialog_delete_title">Confirmar drama</string>
@@ -79,7 +94,6 @@
     <string name="dialog_delete_fallback_name">este registro</string>
     <string name="dialog_slay">Slay</string>
     <string name="dialog_sashay_away">Sashay Away</string>
-    <string name="dialog_confirm_yes">Sí</string>
     <string name="dialog_drag_queen_image">Imagen de reina drag del dialogo</string>
 
     <!-- BroadcastReceiver - Modo avión -->
@@ -92,11 +106,19 @@
     <string name="export_default_filename">libro_de_las_sombras.txt</string>
     <string name="export_success">¡Libro de las Sombras exportado con éxito!</string>
     <string name="export_error">Error al exportar. Ni eso sale bien, reinona.</string>
-    <string name="export_no_shades">No hay shades que exportar todavía.</string>
 
     <!-- Intents implícitos - Botón de compra -->
-    <string name="btn_search_queen">🔍 Buscar en Google</string>
+    <string name="btn_search_queen"> Buscar en Google</string>
     <string name="search_queen_fallback">drag queen</string>
+    <string name="assign_anthem">Asignar himno</string>
+    <string name="play_anthem">Play himno</string>
+    <string name="anthem_select_title">Selecciona un himno</string>
+    <string name="anthem_permission_denied">Sin permiso de audio no se puede cargar la musica del dispositivo.</string>
+    <string name="anthem_no_songs_found">No se han encontrado canciones en el dispositivo.</string>
+    <string name="anthem_assigned">Himno asignado: %1$s</string>
+    <string name="anthem_missing">Esta rival no tiene himno asignado.</string>
+    <string name="anthem_playback_error">No se pudo reproducir el himno seleccionado.</string>
+    <string name="anthem_unknown_title">Canción sin título</string>
 
     <!-- Empty states -->
     <string name="empty_state_queens">No hay rivales aún. ¡Añade una!</string>
@@ -120,6 +142,11 @@
     <!-- Notificaciones locales -->
     <string name="notification_channel_name">Recordatorios del Show</string>
     <string name="notification_channel_description">Avisos para preparar el maquillaje antes de salir al escenario.</string>
+    <string name="notification_show_timer_channel_name">Cronómetro del Show</string>
+    <string name="notification_show_timer_channel_description">Servicio en primer plano para controlar el tiempo del show.</string>
+    <string name="notification_show_timer_title">Show en directo</string>
+    <string name="notification_show_timer_text">Cronómetro activo. No te pases de tiempo, reina.</string>
+    <string name="notification_show_timer_stop">Detener</string>
     <string name="notification_makeup_title">Hora de maquillarse, diva</string>
     <string name="notification_makeup_body">El show empieza pronto. Brocha, brillo y actitud: toca slayear el escenario.</string>
     <string name="notification_test_sent">Recordatorio enviado.</string>
@@ -131,21 +158,42 @@
     <string name="notification_disabled_dialog_positive">Activar</string>
     <string name="notification_disabled_dialog_negative">Cancelar</string>
 
+    <!-- Recordatorio diario: La Hora del Te -->
+    <string name="tea_reminder_title">La Hora del Té</string>
+    <string name="tea_reminder_summary">Programa un recordatorio diario para repasar tus shades.</string>
+    <string name="tea_reminder_time_title">Hora del recordatorio</string>
+    <string name="tea_reminder_time_summary">Todos los días a las %1$s</string>
+    <string name="tea_reminder_notification_title">La Hora del Té</string>
+    <string name="tea_reminder_notification_body">Es hora de repasar los shades del dia.</string>
+
     <!-- Notificaciones CRUD -->
     <string name="notification_crud_channel_name">Actividad del Vault</string>
     <string name="notification_crud_channel_desc">Confirmaciones al crear, editar o borrar queens y shades.</string>
-    <string name="notification_crud_queen_created_title">👑 ¡Nueva rival añadida!</string>
+    <string name="notification_crud_queen_created_title"> ¡Nueva rival añadida!</string>
     <string name="notification_crud_queen_created_body">%1$s ya está en tu Vault. Ojo con ella.</string>
     <string name="notification_crud_queen_updated_title">✏️ Rival actualizada</string>
     <string name="notification_crud_queen_updated_body">Los datos de %1$s han sido actualizados.</string>
-    <string name="notification_crud_queen_deleted_title">🗑️ Rival eliminada</string>
+    <string name="notification_crud_queen_deleted_title">️ Rival eliminada</string>
     <string name="notification_crud_queen_deleted_body">%1$s ha sido perdonada… o simplemente ignorada.</string>
     <string name="notification_crud_shade_created_title">☕ ¡Nuevo shade registrado!</string>
     <string name="notification_crud_shade_created_body">"%1$s" ya está en el Libro de las Sombras.</string>
     <string name="notification_crud_shade_updated_title">✏️ Shade actualizado</string>
     <string name="notification_crud_shade_updated_body">"%1$s" ha sido perfeccionado. Cada detalle cuenta.</string>
-    <string name="notification_crud_shade_deleted_title">🕊️ Shade perdonado</string>
+    <string name="notification_crud_shade_deleted_title">️ Shade perdonado</string>
     <string name="notification_crud_shade_deleted_body">"%1$s" ha sido borrado del Libro de las Sombras. Qué magnánima.</string>
+
+    <!-- Grito global / FCM -->
+    <string name="global_shout_default_title">¡Grito de Guerra!</string>
+    <string name="global_shout_channel_name">Grito global</string>
+    <string name="global_shout_channel_description">Notificaciones para el mensaje global de divas.</string>
+    <string name="global_shout_title">Grito de Guerra</string>
+    <string name="global_shout_subtitle">Manda un mensaje global al resto de usuarias.</string>
+    <string name="global_shout_hint">Escribe tu mensaje...</string>
+    <string name="global_shout_send">Enviar grito</string>
+    <string name="global_shout_message_required">El mensaje no puede estar vacío, reina.</string>
+    <string name="global_shout_sent">Grito enviado.</string>
+    <string name="global_shout_send_failed">No se pudo enviar el grito.</string>
+
     <!-- Diálogos de añadir/editar (textos gestionados por DivaStrings.java) -->
     <string name="dialog_add_queen_title">Añadir rival</string>
     <string name="dialog_edit_queen_title">Editar rival</string>
@@ -153,10 +201,60 @@
     <string name="dialog_edit_shade_title">Editar shade</string>
     <string name="shade_title_hint">Título del shade</string>
     <string name="shade_description_hint">Descripción (el cotilleo completo)</string>
+    <string name="shade_save_location" translatable="false">Guardar ubicación</string>
+    <string name="shade_location_not_saved" translatable="false">No se guardará ubicación para este shade.</string>
     <string name="error_name_required">El nombre es obligatorio, cariño</string>
     <string name="error_title_required">El título es obligatorio</string>
     <string name="pick_photo">Elegir foto</string>
+    <string name="photo_source_title">Elegir origen de la foto</string>
+    <string name="photo_source_gallery">Galería</string>
+    <string name="photo_source_camera">Cámara</string>
     <string name="photo_selected">Foto seleccionada ✓</string>
+    <string name="photo_camera_error">No se pudo abrir la cámara.</string>
     <string name="queen_photo_preview">Vista previa de la foto</string>
 
+    <!-- Auth/Login UI Strings -->
+    <string name="auth_title">Acceso al Club de Divas</string>
+    <string name="auth_username">Usuario</string>
+    <string name="auth_password">Contraseña</string>
+    <string name="auth_login">Iniciar sesión</string>
+    <string name="auth_register">Registrarse</string>
+    <string name="auth_register_title">Registro de usuario</string>
+    <string name="auth_confirm_password">Confirmar contraseña</string>
+    <string name="auth_register_empty_fields">Completa usuario, contraseña y confirmación.</string>
+    <string name="auth_password_mismatch">Las contraseñas no coinciden.</string>
+    <string name="auth_username_required">El nombre de usuario es obligatorio.</string>
+    <string name="auth_failed">No se pudo completar la identificación.</string>
+    <string name="auth_empty_fields">Rellena usuario y contraseña.</string>
+    <string name="auth_required">Necesitas iniciar sesión para continuar.</string>
+
+    <!-- Perfil de usuario -->
+    <string name="profile_tap_to_edit">Toca para cambiar nombre de usuario</string>
+    <string name="profile_edit_title">Cambiar nombre de usuario</string>
+    <string name="profile_save">Guardar cambios</string>
+    <string name="profile_update_success">Perfil actualizado.</string>
+    <string name="profile_update_failed">No se pudo actualizar el perfil.</string>
+    <string name="password_edit_title">Cambiar contraseña</string>
+    <string name="password_edit_summary">Actualiza tu contraseña de acceso.</string>
+    <string name="password_current">Contraseña actual</string>
+    <string name="password_new">Nueva contraseña</string>
+    <string name="password_new_confirm">Confirmar nueva contraseña</string>
+    <string name="password_update_success">Contraseña actualizada.</string>
+    <string name="password_update_failed">No se pudo actualizar la contraseña.</string>
+    <string name="password_change_empty_fields">Completa todos los campos de contraseña.</string>
+    <string name="password_change_mismatch">Las nuevas contraseñas no coinciden.</string>
+
+    <!-- Shade Map Strings -->
+    <string name="shade_map_title">El Mapa de las Sombras</string>
+    <string name="shade_map_permission_required">Permiso de ubicación requerido para el mapa</string>
+    <string name="shade_map_location_enabled">Ubicación habilitada</string>
+    <string name="shade_map_no_location_data">No se pudieron cargar los datos de ubicación</string>
+
+    <!-- Widget de escritorio -->
+    <string name="widget_title">La Hora del Té</string>
+    <string name="widget_no_shades">No hay shades para mostrar.</string>
+    <string name="widget_login_required">Inicia sesion para ver tu ultimo shade.</string>
+    <string name="widget_last_update">Actualizado a las %1$s</string>
+    <string name="widget_description">Widget con un shade aleatorio del dia</string>
+    <string name="widget_last_update_placeholder">Actualizando...</string>
 </resources>

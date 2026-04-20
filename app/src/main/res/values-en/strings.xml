@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SlayVault</string>
-    <string name="drawer_subtitle">Your rivals\' registry 👑</string>
     <string name="actions">Actions</string>
-    <string name="test_notification">Test notification 🔔</string>
+    <string name="test_notification">Test notification </string>
+    <string name="action_show_timer_stop">Stop show timer</string>
+    <string name="show_timer_started">Show timer started.</string>
+    <string name="show_timer_stopped">Show timer stopped.</string>
+    <string name="show_timer">Show timer</string>
+    <string name="show_timer_title">Show Timer</string>
+    <string name="show_timer_hint">Track your performance time accurately.</string>
+    <string name="show_timer_status_ready">Ready to start.</string>
+    <string name="show_timer_status_running">Timer is running.</string>
+    <string name="show_timer_status_paused">Timer is paused.</string>
+    <string name="timer_start">Start</string>
+    <string name="timer_pause">Pause</string>
+    <string name="timer_resume">Resume</string>
+    <string name="timer_reset">Reset</string>
     <string name="open_drawer">Open menu</string>
     <string name="close_drawer">Close menu</string>
 
     <!-- Navigation -->
     <string name="settings">Settings</string>
-    <string name="back">Back</string>
 
     <!-- Queens List Fragment -->
     <string name="queens_list">Rivals</string>
-    <string name="queen_name">Rival\'s Name</string>
-    <string name="queen_description">Rival\'s description</string>
-    <string name="queen_avatar">Rival\'s avatar</string>
+    <string name="queen_name">Rival Name</string>
+    <string name="queen_description">Rival description</string>
+    <string name="queen_avatar">Rival avatar</string>
 
     <!-- Shady Details Fragment -->
-    <string name="queen_details">Rival Details</string>
     <string name="shade_category">Shade Category</string>
+    <string name="shade_details">Shade Details</string>
 
     <!-- Card Items -->
     <string name="envy_level">Envy Level</string>
@@ -41,8 +52,7 @@
     <string name="action_close">Close</string>
     <string name="queen_deleted">%1$s deleted</string>
     <string name="shade_deleted">Shade deleted</string>
-    <string name="shade_shared_toast">Share shade</string>
-    <string name="shade_share_footer">Shade about %1$s — SlayVault 👑</string>
+    <string name="shade_share_footer">Shade about %1$s — SlayVault </string>
     <string name="queen_stats_toast">Stats for %1$s</string>
     <string name="stats_total_shades">Shades thrown</string>
     <string name="stats_avg_intensity">Average intensity</string>
@@ -61,18 +71,23 @@
 
     <!-- Settings Fragment -->
     <string name="appearance">Appearance</string>
-    <string name="diva_mode">Diva Mode Total 💅</string>
+    <string name="diva_mode">Diva Mode Total </string>
     <string name="diva_mode_summary">Enables drag queen language throughout the app. Because "Accept" is for basic people.</string>
     <string name="notifications">Notifications</string>
     <string name="enable_notifications">Enable Notifications</string>
     <string name="enable_notifications_summary">Receive reminders to do your makeup before the show</string>
     <string name="about">About</string>
+    <string name="logout">Sign out</string>
+    <string name="logout_summary">Leave your account and go back to access</string>
+    <string name="logout_confirm_title">Sign out</string>
+    <string name="logout_confirm_message">Are you sure you want to sign out?</string>
+    <string name="logout_confirm_positive">Yes, sign out</string>
+    <string name="logout_confirm_negative">Cancel</string>
     <string name="version">Version</string>
 
     <!-- Language preference -->
     <string name="language_category">Idioma / Language</string>
     <string name="language">App language</string>
-    <string name="language_summary">Choose the app language</string>
 
     <!-- Delete dialog -->
     <string name="dialog_delete_title">Confirm drama</string>
@@ -80,7 +95,6 @@
     <string name="dialog_delete_fallback_name">this entry</string>
     <string name="dialog_slay">Slay</string>
     <string name="dialog_sashay_away">Sashay Away</string>
-    <string name="dialog_confirm_yes">Yes</string>
     <string name="dialog_drag_queen_image">Drag queen dialog image</string>
 
     <!-- BroadcastReceiver - Airplane mode -->
@@ -93,41 +107,74 @@
     <string name="export_default_filename">shade_book.txt</string>
     <string name="export_success">Shade Book exported successfully!</string>
     <string name="export_error">Export error. Even that goes wrong today, honey.</string>
-    <string name="export_no_shades">No shades to export yet.</string>
 
     <!-- Implicit intents -->
-    <string name="btn_search_queen">🔍 Search on Google</string>
+    <string name="btn_search_queen"> Search on Google</string>
     <string name="search_queen_fallback">drag queen</string>
+    <string name="assign_anthem">Assign anthem</string>
+    <string name="play_anthem">Play anthem</string>
+    <string name="anthem_select_title">Select an anthem</string>
+    <string name="anthem_permission_denied">Audio permission is required to load music from this device.</string>
+    <string name="anthem_no_songs_found">No songs were found on this device.</string>
+    <string name="anthem_assigned">Anthem assigned: %1$s</string>
+    <string name="anthem_missing">This rival has no anthem assigned.</string>
+    <string name="anthem_playback_error">Could not play the selected anthem.</string>
+    <string name="anthem_unknown_title">Untitled song</string>
 
     <!-- Local notifications -->
     <string name="notification_channel_name">Show Reminders</string>
     <string name="notification_channel_description">Alerts to prepare your makeup before hitting the stage.</string>
+    <string name="notification_show_timer_channel_name">Show Timer</string>
+    <string name="notification_show_timer_channel_description">Foreground service while the performance is active.</string>
+    <string name="notification_show_timer_title">Live show</string>
+    <string name="notification_show_timer_text">Timer running. Keep it tight, queen.</string>
+    <string name="notification_show_timer_stop">Stop</string>
     <string name="notification_makeup_title">Time to do your makeup, diva</string>
     <string name="notification_makeup_body">The show starts soon. Brush, gloss and attitude: time to slay the stage.</string>
     <string name="notification_test_sent">Reminder sent.</string>
     <string name="notification_enabled_toast">Notifications enabled.</string>
     <string name="notification_disabled_toast">Notifications disabled.</string>
-    <string name="notification_permission_denied">Without permission we can\'t send you reminders.</string>
+    <string name="notification_permission_denied">Without permission we cannot send you reminders.</string>
     <string name="notification_disabled_dialog_title">Notifications are disabled</string>
     <string name="notification_disabled_dialog_message">Notifications are disabled. Do you want to enable them?</string>
     <string name="notification_disabled_dialog_positive">Enable</string>
     <string name="notification_disabled_dialog_negative">Cancel</string>
 
+    <!-- Daily reminder: Tea Time -->
+    <string name="tea_reminder_title">Tea Time</string>
+    <string name="tea_reminder_summary">Schedule a daily reminder to review your shades.</string>
+    <string name="tea_reminder_time_title">Reminder time</string>
+    <string name="tea_reminder_time_summary">Every day at %1$s</string>
+    <string name="tea_reminder_notification_title">Tea Time</string>
+    <string name="tea_reminder_notification_body">Time to review today shades.</string>
+
     <!-- CRUD notifications -->
     <string name="notification_crud_channel_name">Vault Activity</string>
     <string name="notification_crud_channel_desc">Confirmations when creating, editing or deleting queens and shades.</string>
-    <string name="notification_crud_queen_created_title">👑 New rival added!</string>
+    <string name="notification_crud_queen_created_title"> New rival added!</string>
     <string name="notification_crud_queen_created_body">%1$s is now in your Vault. Watch out for her.</string>
     <string name="notification_crud_queen_updated_title">✏️ Rival updated</string>
-    <string name="notification_crud_queen_updated_body">%1$s\'s data has been updated.</string>
-    <string name="notification_crud_queen_deleted_title">🗑️ Rival eliminated</string>
+    <string name="notification_crud_queen_updated_body">Data for %1$s has been updated.</string>
+    <string name="notification_crud_queen_deleted_title">️ Rival eliminated</string>
     <string name="notification_crud_queen_deleted_body">%1$s has been forgiven… or simply ignored.</string>
     <string name="notification_crud_shade_created_title">☕ New shade logged!</string>
     <string name="notification_crud_shade_created_body">"%1$s" is now in the Shade Book.</string>
     <string name="notification_crud_shade_updated_title">✏️ Shade updated</string>
     <string name="notification_crud_shade_updated_body">"%1$s" has been perfected. Every detail counts.</string>
-    <string name="notification_crud_shade_deleted_title">🕊️ Shade forgiven</string>
+    <string name="notification_crud_shade_deleted_title">️ Shade forgiven</string>
     <string name="notification_crud_shade_deleted_body">"%1$s" has been erased from the Shade Book. How magnanimous.</string>
+
+    <!-- Global shout / FCM -->
+    <string name="global_shout_default_title">War Shout!</string>
+    <string name="global_shout_channel_name">Global shout</string>
+    <string name="global_shout_channel_description">Notifications for the divas global message.</string>
+    <string name="global_shout_title">War Shout</string>
+    <string name="global_shout_subtitle">Send a global message to all other users.</string>
+    <string name="global_shout_hint">Write your message...</string>
+    <string name="global_shout_send">Send shout</string>
+    <string name="global_shout_message_required">Message cannot be empty, queen.</string>
+    <string name="global_shout_sent">Shout sent.</string>
+    <string name="global_shout_send_failed">Could not send the shout.</string>
 
     <!-- Add/Edit dialogs -->
     <string name="dialog_add_queen_title">Add rival</string>
@@ -136,10 +183,16 @@
     <string name="dialog_edit_shade_title">Edit shade</string>
     <string name="shade_title_hint">Shade title</string>
     <string name="shade_description_hint">Description (the full gossip)</string>
+    <string name="shade_save_location">Save location</string>
+    <string name="shade_location_not_saved">Location will not be saved for this shade.</string>
     <string name="error_name_required">Name is required, honey</string>
     <string name="error_title_required">Title is required</string>
     <string name="pick_photo">Choose photo</string>
+    <string name="photo_source_title">Choose photo source</string>
+    <string name="photo_source_gallery">Gallery</string>
+    <string name="photo_source_camera">Camera</string>
     <string name="photo_selected">Photo selected ✓</string>
+    <string name="photo_camera_error">Could not open camera.</string>
     <string name="queen_photo_preview">Photo preview</string>
 
     <!-- Empty states -->
@@ -160,4 +213,49 @@
 
     <!-- Export file header -->
     <string name="export_file_header">═══════════════════════════════════════\n         SHADE BOOK\n   (Archive of shades and gossip)\n═══════════════════════════════════════\n</string>
+
+    <!-- Auth/Login strings -->
+    <string name="auth_title">Diva Club Access</string>
+    <string name="auth_username">Username</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_login">Sign in</string>
+    <string name="auth_register">Register</string>
+    <string name="auth_register_title">User registration</string>
+    <string name="auth_confirm_password">Confirm password</string>
+    <string name="auth_register_empty_fields">Fill username, password and confirmation.</string>
+    <string name="auth_password_mismatch">Passwords do not match.</string>
+    <string name="auth_username_required">Username is required.</string>
+    <string name="auth_failed">Authentication failed.</string>
+    <string name="auth_empty_fields">Fill in username and password.</string>
+    <string name="auth_required">You must be signed in to continue.</string>
+
+    <!-- User profile -->
+    <string name="profile_tap_to_edit">Tap to change username</string>
+    <string name="profile_edit_title">Change username</string>
+    <string name="profile_save">Save changes</string>
+    <string name="profile_update_success">Profile updated.</string>
+    <string name="profile_update_failed">Could not update profile.</string>
+    <string name="password_edit_title">Change password</string>
+    <string name="password_edit_summary">Update your access password.</string>
+    <string name="password_current">Current password</string>
+    <string name="password_new">New password</string>
+    <string name="password_new_confirm">Confirm new password</string>
+    <string name="password_update_success">Password updated.</string>
+    <string name="password_update_failed">Could not update password.</string>
+    <string name="password_change_empty_fields">Fill in all password fields.</string>
+    <string name="password_change_mismatch">New passwords do not match.</string>
+
+    <!-- Shade Map Strings -->
+    <string name="shade_map_title">The Shade Map</string>
+    <string name="shade_map_permission_required">Location permission required for the map</string>
+    <string name="shade_map_location_enabled">Location enabled</string>
+    <string name="shade_map_no_location_data">Could not load location data</string>
+
+    <!-- Home widget -->
+    <string name="widget_title">Tea Time</string>
+    <string name="widget_no_shades">No shades to show yet.</string>
+    <string name="widget_login_required">Sign in to see your latest shade.</string>
+    <string name="widget_last_update">Updated at %1$s</string>
+    <string name="widget_description">Widget with a random shade of the day</string>
+    <string name="widget_last_update_placeholder">Updating…</string>
 </resources>

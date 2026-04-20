@@ -6,7 +6,9 @@ import androidx.preference.PreferenceManager;
 
 import com.example.slay_vault.R;
 
-// Textos de la app con soporte Diva Mode. Cuando está activo devuelve frases drag (siempre ES); si no, delega en strings.xml respetando el idioma elegido.
+import java.util.Locale;
+
+// Textos de UI con soporte para Diva Mode.
 public class DivaStrings {
 
     public static final String KEY_DIVA_MODE = "diva_mode";
@@ -16,7 +18,7 @@ public class DivaStrings {
                 .getBoolean(KEY_DIVA_MODE, false);
     }
 
-    // Navegación
+    // Títulos de pantalla.
 
     public static String screenTitleQueensList(Context ctx) {
         return isDivaModeEnabled(ctx) ? "👑 Mis Enemigas, Boobs" : ctx.getString(R.string.queens_list);
@@ -24,6 +26,10 @@ public class DivaStrings {
 
     public static String screenTitleSettings(Context ctx) {
         return isDivaModeEnabled(ctx) ? "💅 El Camerino" : ctx.getString(R.string.settings);
+    }
+
+    public static String screenTitleShowTimer(Context ctx) {
+        return isDivaModeEnabled(ctx) ? "⏱️ Reloj del Show" : ctx.getString(R.string.show_timer_title);
     }
 
     // Diálogos add/edit
@@ -42,6 +48,63 @@ public class DivaStrings {
 
     public static String dialogEditShadeTitle(Context ctx) {
         return isDivaModeEnabled(ctx) ? "Editar el té ✏️" : ctx.getString(R.string.dialog_edit_shade_title);
+    }
+
+    public static String shadeSaveLocationLabel(Context ctx) {
+        if (isDivaModeEnabled(ctx)) {
+            return "Guardar ubicación del drama";
+        }
+        return isSpanish(ctx) ? "Guardar ubicación" : "Save location";
+    }
+
+    public static String shadeLocationNotSaved(Context ctx) {
+        if (isDivaModeEnabled(ctx)) {
+            return "Sin ubicación guardada.";
+        }
+        return isSpanish(ctx)
+                ? "No se guardará ubicación para este shade."
+                : "Location will not be saved for this shade.";
+    }
+
+    public static String shadeLocationLocating(Context ctx) {
+        if (isDivaModeEnabled(ctx)) {
+            return "Buscando coordenadas, reina...";
+        }
+        return isSpanish(ctx) ? "Buscando ubicación..." : "Fetching location...";
+    }
+
+    public static String shadeLocationCaptured(Context ctx, String coords) {
+        if (isDivaModeEnabled(ctx)) {
+            return "Ubicación fichada: " + coords;
+        }
+        return isSpanish(ctx)
+                ? "Ubicación guardada: " + coords
+                : "Saved location: " + coords;
+    }
+
+    public static String shadeLocationPermissionDenied(Context ctx) {
+        if (isDivaModeEnabled(ctx)) {
+            return "Sin permiso no puedo ubicar el tea.";
+        }
+        return isSpanish(ctx) ? "Permiso de ubicación denegado." : "Location permission denied.";
+    }
+
+    public static String shadeLocationUnavailable(Context ctx) {
+        if (isDivaModeEnabled(ctx)) {
+            return "No he encontrado ubicación ahora mismo.";
+        }
+        return isSpanish(ctx)
+                ? "No se pudo obtener la ubicación actual."
+                : "Could not get current location.";
+    }
+
+    public static String shadeLocationNeededToSave(Context ctx) {
+        if (isDivaModeEnabled(ctx)) {
+            return "Activa ubicación o desmarca la opción para guardar.";
+        }
+        return isSpanish(ctx)
+                ? "Activa ubicación o desmarca la opción para guardar."
+                : "Enable location or disable the save-location option.";
     }
 
     // Listas y estados vacíos
@@ -78,7 +141,7 @@ public class DivaStrings {
         return isDivaModeEnabled(ctx) ? "¡No, que sigue en mi lista negra! 📋" : ctx.getString(R.string.dialog_sashay_away);
     }
 
-    // Notificaciones de recordatorio
+    // Textos de notificaciones
 
     public static String notificationMakeupTitle(Context ctx) {
         return isDivaModeEnabled(ctx) ? "¡EMERGENCIA DIVA! 🚨" : ctx.getString(R.string.notification_makeup_title);
@@ -112,6 +175,173 @@ public class DivaStrings {
         return isDivaModeEnabled(ctx)
                 ? "Paso por ahora"
                 : ctx.getString(R.string.notification_disabled_dialog_negative);
+    }
+
+    public static String actionShowTimerStart(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Cronometrar show"
+                : ctx.getString(R.string.show_timer);
+    }
+
+    public static String actionShowTimerStop(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Cerrar show en vivo"
+                : ctx.getString(R.string.action_show_timer_stop);
+    }
+
+    public static String showTimerHint(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Controla el numero para salir del escenario en el momento exacto, reina."
+                : ctx.getString(R.string.show_timer_hint);
+    }
+
+    public static String showTimerStatusReady(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Lista para empezar el show."
+                : ctx.getString(R.string.show_timer_status_ready);
+    }
+
+    public static String showTimerStatusRunning(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Show en vivo. Mantiene el ritmo."
+                : ctx.getString(R.string.show_timer_status_running);
+    }
+
+    public static String showTimerStatusPaused(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Pausa tecnica. Puedes retomar o reiniciar."
+                : ctx.getString(R.string.show_timer_status_paused);
+    }
+
+    public static String timerStart(Context ctx) {
+        return isDivaModeEnabled(ctx) ? "Iniciar" : ctx.getString(R.string.timer_start);
+    }
+
+    public static String timerPause(Context ctx) {
+        return isDivaModeEnabled(ctx) ? "Pausar" : ctx.getString(R.string.timer_pause);
+    }
+
+    public static String timerResume(Context ctx) {
+        return isDivaModeEnabled(ctx) ? "Reanudar" : ctx.getString(R.string.timer_resume);
+    }
+
+    public static String showTimerStarted(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Cronometro en marcha, reinona."
+                : ctx.getString(R.string.show_timer_started);
+    }
+
+    public static String showTimerStopped(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Show cerrado. Respira y retoca."
+                : ctx.getString(R.string.show_timer_stopped);
+    }
+
+    public static String notificationShowTimerTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Show en vivo"
+                : ctx.getString(R.string.notification_show_timer_title);
+    }
+
+    public static String notificationShowTimerBody(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Cronometro activo. Que no se alargue el numerito."
+                : ctx.getString(R.string.notification_show_timer_text);
+    }
+
+    public static String notificationShowTimerStop(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Cerrar"
+                : ctx.getString(R.string.notification_show_timer_stop);
+    }
+
+    public static String widgetTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "La Hora del Té"
+                : ctx.getString(R.string.widget_title);
+    }
+
+    public static String widgetNoShades(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Sin té por ahora. Hoy toca portarse bien."
+                : ctx.getString(R.string.widget_no_shades);
+    }
+
+    public static String widgetLoginRequired(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Inicia sesión para ver el té del dia."
+                : ctx.getString(R.string.widget_login_required);
+    }
+
+    public static String teaReminderTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "La Hora del Té diario"
+                : ctx.getString(R.string.tea_reminder_title);
+    }
+
+    public static String teaReminderSummary(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Activa un aviso diario para repasar el tea del dia."
+                : ctx.getString(R.string.tea_reminder_summary);
+    }
+
+    public static String teaReminderTimeTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Hora del Té"
+                : ctx.getString(R.string.tea_reminder_time_title);
+    }
+
+    public static String teaReminderTimeSummary(Context ctx, String formattedTime) {
+        if (isDivaModeEnabled(ctx)) {
+            return "Se sirve cada dia a las " + formattedTime;
+        }
+        return ctx.getString(R.string.tea_reminder_time_summary, formattedTime);
+    }
+
+    public static String teaReminderNotificationTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "La Hora del Té"
+                : ctx.getString(R.string.tea_reminder_notification_title);
+    }
+
+    public static String teaReminderNotificationBody(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Momento de repasar tus shades del dia, reinona."
+                : ctx.getString(R.string.tea_reminder_notification_body);
+    }
+
+    public static String logoutTitle(Context ctx) {
+        return isDivaModeEnabled(ctx) ? "Cerrar camerino" : ctx.getString(R.string.logout);
+    }
+
+    public static String logoutSummary(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Salir del club y volver al acceso, reinona"
+                : ctx.getString(R.string.logout_summary);
+    }
+
+    public static String logoutConfirmTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "¿Bajas del escenario?"
+                : ctx.getString(R.string.logout_confirm_title);
+    }
+
+    public static String logoutConfirmMessage(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Si cierras sesión, te mandamos directa al backstage. ¿Seguimos?"
+                : ctx.getString(R.string.logout_confirm_message);
+    }
+
+    public static String logoutConfirmPositive(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Si, cierro el show"
+                : ctx.getString(R.string.logout_confirm_positive);
+    }
+
+    public static String logoutConfirmNegative(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "No, me quedo"
+                : ctx.getString(R.string.logout_confirm_negative);
     }
 
     // Notificaciones de eventos CRUD
@@ -170,7 +400,7 @@ public class DivaStrings {
                 : ctx.getString(R.string.notification_crud_shade_deleted_body, title);
     }
 
-    // Toasts de feedback
+    // Mensajes de feedback.
 
     public static String toastDivaModeEnabled() {
         return "¡MODO DIVA TOTAL ACTIVADO, REINONA! El mundo tiembla. 👑🔥";
@@ -220,6 +450,122 @@ public class DivaStrings {
 
     public static String searchQueenFallback(Context ctx) {
         return isDivaModeEnabled(ctx) ? "lagarta envidiosa" : ctx.getString(R.string.search_queen_fallback);
+    }
+
+    public static String buttonAssignAnthem(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Asignar himno del drama"
+                : ctx.getString(R.string.assign_anthem);
+    }
+
+    public static String buttonPlayAnthem(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Reproducir himno"
+                : ctx.getString(R.string.play_anthem);
+    }
+
+    public static String anthemSelectTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Elige el himno de esta rival"
+                : ctx.getString(R.string.anthem_select_title);
+    }
+
+    public static String anthemPermissionDenied(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Sin permiso de audio no hay playlist, reinona."
+                : ctx.getString(R.string.anthem_permission_denied);
+    }
+
+    public static String anthemNoSongsFound(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "No encontré canciones en este móvil, drama total."
+                : ctx.getString(R.string.anthem_no_songs_found);
+    }
+
+    public static String anthemAssigned(Context ctx, String songTitle) {
+        return isDivaModeEnabled(ctx)
+                ? "Himno fichado: " + songTitle
+                : ctx.getString(R.string.anthem_assigned, songTitle);
+    }
+
+    public static String anthemMissing(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Esta rival sigue sin himno asignado."
+                : ctx.getString(R.string.anthem_missing);
+    }
+
+    public static String anthemPlaybackError(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "No pude reproducir el himno."
+                : ctx.getString(R.string.anthem_playback_error);
+    }
+
+    public static String anthemUnknownTitle(Context ctx) {
+        return isDivaModeEnabled(ctx)
+                ? "Canción sin titulo"
+                : ctx.getString(R.string.anthem_unknown_title);
+    }
+
+    public static String globalShoutTitle(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_title);
+        }
+        return isSpanish(ctx) ? "Grito de Guerra" : "Battle Cry";
+    }
+
+    public static String globalShoutSubtitle(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_subtitle);
+        }
+        return isSpanish(ctx)
+                ? "Lanza un mensaje global y deja claro quien manda, reinona."
+                : "Drop a global message and remind everyone who runs this stage.";
+    }
+
+    public static String globalShoutHint(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_hint);
+        }
+        return isSpanish(ctx) ? "Suelta el tea global..." : "Spill your global tea...";
+    }
+
+    public static String globalShoutSend(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_send);
+        }
+        return isSpanish(ctx) ? "Enviar grito" : "Send battle cry";
+    }
+
+    public static String globalShoutMessageRequired(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_message_required);
+        }
+        return isSpanish(ctx)
+                ? "No puedes mandar silencio, reina."
+                : "Silence is not a message, queen.";
+    }
+
+    public static String globalShoutSent(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_sent);
+        }
+        return isSpanish(ctx) ? "Grito enviado. Que empiece el drama." : "Battle cry sent. Let the drama begin.";
+    }
+
+    public static String globalShoutSendFailed(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_send_failed);
+        }
+        return isSpanish(ctx)
+                ? "No se pudo mandar el grito. El backstage esta caido."
+                : "Could not send your battle cry. Backstage is down.";
+    }
+
+    public static String globalShoutDefaultTitle(Context ctx) {
+        if (!isDivaModeEnabled(ctx)) {
+            return ctx.getString(R.string.global_shout_default_title);
+        }
+        return isSpanish(ctx) ? "Grito de Guerra" : "Battle Cry";
     }
 
     // Menús contextuales
@@ -278,5 +624,10 @@ public class DivaStrings {
 
     public static String dialogStatsTitle(Context ctx, String name) {
         return isDivaModeEnabled(ctx) ? "📊 Dosier de " + name : ctx.getString(R.string.queen_stats_toast, name);
+    }
+
+    private static boolean isSpanish(Context ctx) {
+        Locale locale = ctx.getResources().getConfiguration().getLocales().get(0);
+        return locale != null && "es".equalsIgnoreCase(locale.getLanguage());
     }
 }

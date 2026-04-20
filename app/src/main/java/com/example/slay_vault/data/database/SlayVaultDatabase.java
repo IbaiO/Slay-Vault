@@ -16,11 +16,6 @@ import com.example.slay_vault.data.dao.QueenDao;
 import com.example.slay_vault.data.dao.ShadeEntryDao;
 import com.example.slay_vault.data.entities.QueenEntity;
 import com.example.slay_vault.data.entities.ShadeEntryEntity;
-import com.example.slay_vault.data.utils.SampleDataGenerator;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,26 +23,26 @@ import java.util.concurrent.Executors;
 // BD Room de SlayVault. Tablas: queens y shade_entries. Singleton con ExecutorService para background.
 @Database(
     entities = {QueenEntity.class, ShadeEntryEntity.class},
-    version = 3,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters({DateConverter.class, StringListConverter.class})
 public abstract class SlayVaultDatabase extends RoomDatabase {
 
-    // DAOs implementados por Room
+    // Accesos DAO.
     public abstract QueenDao queenDao();
     public abstract ShadeEntryDao shadeEntryDao();
 
     // Instancia singleton
     private static volatile SlayVaultDatabase INSTANCE;
 
-    // Pool de hilos para operaciones en background (4 hilos)
+    // Pool para operaciones en segundo plano.
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     private static final String TAG = "SlayVaultDB";
 
-    // Devuelve la instancia única, creándola si es necesario
+    // Devuelve la instancia unica de la base de datos.
     public static SlayVaultDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
             synchronized (SlayVaultDatabase.class) {
@@ -66,20 +61,8 @@ public abstract class SlayVaultDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    // Callback: inserta datos de ejemplo al crear la BD o tras migración destructiva
+    // Callback de apertura para trazas de diagnóstico.
     private static final RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
-        @Override
-        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
-            populateSampleData();
-        }
-
-        @Override
-        public void onDestructiveMigration(@NonNull SupportSQLiteDatabase db) {
-            super.onDestructiveMigration(db);
-            populateSampleData();
-        }
-
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
@@ -87,36 +70,8 @@ public abstract class SlayVaultDatabase extends RoomDatabase {
         }
     };
 
-    // Inserta Drag Queens y shades de ejemplo y recalcula contadores
-    private static void populateSampleData() {
-        databaseExecutor.execute(() -> {
-            if (INSTANCE == null) return;
 
-            QueenDao queenDao = INSTANCE.queenDao();
-            ShadeEntryDao shadeDao = INSTANCE.shadeEntryDao();
-
-            queenDao.insertAll(SampleDataGenerator.generateSampleQueens());
-            shadeDao.insertAll(SampleDataGenerator.generateSampleShades());
-
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            long now = System.currentTimeMillis();
-            List<QueenEntity> queens = queenDao.getAllQueensList();
-            for (QueenEntity queen : queens) {
-                int count = shadeDao.getShadesCountByQueenSync(queen.getId());
-                queenDao.updateShadesCount(queen.getId(), count, now);
-
-                ShadeEntryEntity latest = shadeDao.getMostRecentShadeByQueenSync(queen.getId());
-                if (latest != null && latest.getDate() != null) {
-                    queenDao.updateLastShadeDate(queen.getId(),
-                            sdf.format(latest.getDate()), now);
-                }
-            }
-
-            Log.d(TAG, "Datos de ejemplo insertados correctamente");
-        });
-    }
-
-    // Cierra y libera la instancia
+    // Cierra y libera la instancia actual.
     public static void closeDatabase() {
         if (INSTANCE != null) {
             INSTANCE.close();

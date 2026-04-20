@@ -3,11 +3,12 @@ package com.example.slay_vault.data.models;
 import java.util.Date;
 import java.util.List;
 
-// Modelo de datos para un Shade (trapito sucio)
+// Modelo de datos para un Shade
 public class Shade {
 
     private String id;
-    private String queenId; // ID de la Queen a la que pertenece este shade
+    private String queenId;
+    private String userId;
     private String title;
     private String description;
     private String category; // Categoría (Outfit, Comentario, Actitud, etc.)
@@ -16,16 +17,20 @@ public class Shade {
     private List<String> tags; // Etiquetas/tags asociados
     private Date createdAt;
     private Date updatedAt;
+    private Double latitude;
+    private Double longitude;
+    private String locationAddress;
 
-    // Constructor vacío requerido por Room
+    // Constructor vacío
     public Shade() {
     }
 
     // Constructor completo: createdAt y updatedAt se asignan con la fecha actual
-    public Shade(String id, String queenId, String title, String description,
+    public Shade(String id, String queenId, String userId, String title, String description,
                  String category, float intensity, Date date, List<String> tags) {
         this.id = id;
         this.queenId = queenId;
+        this.userId = userId;
         this.title = title;
         this.description = description;
         this.category = category;
@@ -51,6 +56,14 @@ public class Shade {
 
     public void setQueenId(String queenId) {
         this.queenId = queenId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getTitle() {
@@ -117,6 +130,30 @@ public class Shade {
         this.updatedAt = updatedAt;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(String locationAddress) {
+        this.locationAddress = locationAddress;
+    }
+
     // Añade un tag al shade si no existe ya
     public void addTag(String tag) {
         if (tags != null && !tags.contains(tag)) {
@@ -138,6 +175,7 @@ public class Shade {
         return "Shade{" +
                 "id='" + id + '\'' +
                 ", queenId='" + queenId + '\'' +
+                ", userId='" + userId + '\'' +
                 ", title='" + title + '\'' +
                 ", category='" + category + '\'' +
                 ", intensity=" + intensity +
@@ -145,4 +183,3 @@ public class Shade {
                 '}';
     }
 }
-

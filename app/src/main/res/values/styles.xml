@@ -23,4 +23,12 @@
     </style>
 
     <style name="SlayVault.Chip.TagText" parent="TextAppearance.Material3.LabelSmall" />
+
+    <style name="ThemeOverlay.SlayVault.TimePicker" parent="ThemeOverlay.Material3.MaterialTimePicker">
+        <item name="colorPrimary">@color/diva_fuchsia</item>
+        <item name="colorOnPrimary">@color/diva_on_fuchsia</item>
+        <item name="colorSecondary">@color/diva_fuchsia_dark</item>
+        <item name="colorSurface">@color/diva_background</item>
+        <item name="colorOnSurface">@color/black</item>
+    </style>
 </resources>

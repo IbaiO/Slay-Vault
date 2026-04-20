@@ -1,6 +1,20 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
+    id 'com.google.gms.google-services'
 }
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream ->
+        localProperties.load(stream)
+    }
+}
+
+def mapsApiKey = localProperties.getProperty("MAPS_API_KEY", "")
+def apiBaseUrl = localProperties.getProperty("API_BASE_URL", "http://10.0.2.2:8080/slay-vault-api/")
 
 android {
     namespace = 'com.example.slay_vault'
@@ -12,6 +26,11 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
+        manifestPlaceholders = [
+                MAPS_API_KEY: mapsApiKey
+        ]
+        buildConfigField "String", "API_BASE_URL", "\"${apiBaseUrl}\""
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,6 +44,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -44,6 +66,7 @@ dependencies {
 
     // Room Database
     implementation libs.room.runtime
+    implementation libs.work.runtime
     annotationProcessor libs.room.compiler
 
     // Preference (SharedPreferences)
@@ -51,6 +74,16 @@ dependencies {
 
     // Gson para serialización JSON
     implementation libs.gson
+
+    // Google Maps y ubicación
+    implementation libs.play.services.maps
+    implementation libs.play.services.location
+
+    // Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging:24.1.1'
+
+    // WorkManager
+    implementation 'androidx.work:work-runtime:2.10.1'
 
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

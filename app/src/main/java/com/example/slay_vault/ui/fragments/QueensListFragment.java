@@ -23,9 +23,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slay_vault.MainActivity;
 import com.example.slay_vault.R;
+import com.example.slay_vault.data.auth.SessionManager;
 import com.example.slay_vault.data.database.SlayVaultDatabase;
 import com.example.slay_vault.data.mappers.QueenMapper;
 import com.example.slay_vault.data.models.Queen;
+import com.example.slay_vault.data.remote.AuthService;
 import com.example.slay_vault.notifications.LocalReminderNotifier;
 import com.example.slay_vault.ui.DivaStrings;
 import com.example.slay_vault.ui.adapters.QueensAdapter;
@@ -119,7 +121,7 @@ public class QueensListFragment extends Fragment {
         observeQueens();
     }
 
-    // Inicializa el RecyclerView y los listeners de clic
+    // Inicializa el RecyclerView y los listeners de click
     private void setupRecyclerView() {
         adapter = new QueensAdapter();
 
@@ -140,7 +142,7 @@ public class QueensListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
     }
 
-    // Navega al detalle de la queen (adaptativo dual/simple)
+    // Navega al detalle en modo simple o dual.
     private void navigateToQueenDetails(Queen queen) {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).navigateToShadyDetails(queen.getId());
@@ -152,7 +154,7 @@ public class QueensListFragment extends Fragment {
         }
     }
 
-    // Muestra el menú contextual de long click (editar, eliminar, estadísticas)
+    // Muestra el menu contextual de la queen.
     private void showQueenOptions(Queen queen, int position) {
         String[] options = {
             DivaStrings.actionEdit(requireContext()),
@@ -195,11 +197,19 @@ public class QueensListFragment extends Fragment {
                     Queen queen = adapter.getQueen(pendingDeleteQueenPosition);
                     if (queen != null) {
                         String queenName = queen.getName();
-                        SlayVaultDatabase.databaseExecutor.execute(() ->
-                                SlayVaultDatabase.getInstance(requireContext().getApplicationContext())
-                                        .queenDao()
-                                        .deleteById(queen.getId())
-                        );
+                        String userId = SessionManager.getUserId(requireContext());
+                        SlayVaultDatabase.databaseExecutor.execute(() -> {
+                            SlayVaultDatabase.getInstance(requireContext().getApplicationContext())
+                                    .queenDao()
+                                    .deleteById(queen.getId());
+                            if (userId != null && !userId.trim().isEmpty()) {
+                                try {
+                                    new AuthService().deleteQueen(userId, queen.getId());
+                                } catch (Exception ignored) {
+                                    // Si falla remoto, se mantiene el borrado local.
+                                }
+                            }
+                        });
                         LocalReminderNotifier.notifyQueenDeleted(requireContext(), queenName);
                         Toast.makeText(getContext(), getString(R.string.queen_deleted, queenName), Toast.LENGTH_SHORT).show();
                     }
@@ -220,7 +230,7 @@ public class QueensListFragment extends Fragment {
                 .show(getParentFragmentManager(), TAG_DELETE_DIALOG);
     }
 
-    // Muestra u oculta el empty state según si el adapter está vacío
+    // Muestra u oculta el estado vacío.
     private void updateEmptyState() {
         if (adapter.getItemCount() == 0) {
             emptyState.setVisibility(View.VISIBLE);
@@ -233,9 +243,16 @@ public class QueensListFragment extends Fragment {
 
     // Observa las queens de Room con LiveData y actualiza el adapter
     private void observeQueens() {
+        String userId = SessionManager.getUserId(requireContext());
+        if (userId == null || userId.trim().isEmpty()) {
+            adapter.setQueens(java.util.Collections.emptyList());
+            updateEmptyState();
+            return;
+        }
+
         SlayVaultDatabase.getInstance(requireContext().getApplicationContext())
                 .queenDao()
-                .getAllQueens()
+                .getAllQueensByUser(userId)
                 .observe(getViewLifecycleOwner(), entities -> {
                     List<Queen> queens = QueenMapper.fromEntityList(entities);
                     adapter.setQueens(queens);

@@ -1,8 +1,15 @@
 package com.example.slay_vault.ui.fragments;
 
+import android.Manifest;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,28 +21,36 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slay_vault.R;
+import com.example.slay_vault.data.auth.SessionManager;
 import com.example.slay_vault.data.database.SlayVaultDatabase;
 import com.example.slay_vault.data.entities.ShadeEntryEntity;
 import com.example.slay_vault.data.mappers.QueenMapper;
 import com.example.slay_vault.data.mappers.ShadeMapper;
 import com.example.slay_vault.data.models.Queen;
 import com.example.slay_vault.data.models.Shade;
+import com.example.slay_vault.data.remote.AuthService;
 import com.example.slay_vault.notifications.LocalReminderNotifier;
 import com.example.slay_vault.ui.DivaStrings;
 import com.example.slay_vault.ui.adapters.ShadesAdapter;
+import com.example.slay_vault.ui.utils.QueenPhotoLoader;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Date;
 
 // Fragment que muestra los detalles de un shade (rival).
 public class ShadyDetailsFragment extends Fragment {
@@ -48,13 +63,37 @@ public class ShadyDetailsFragment extends Fragment {
     private TextView avgShadeIntensity;
     private RecyclerView shadesRecyclerView;
     private LinearLayout emptyStateShades;
+    private MaterialButton btnPlayAnthem;
 
     private ShadesAdapter shadesAdapter;
     private Queen currentQueen;
+    private MediaPlayer mediaPlayer;
 
     private static final String REQUEST_DELETE_SHADE = "request_delete_shade";
     private static final String TAG_DELETE_DIALOG = "tag_delete_shade_dialog";
     private int pendingDeleteShadePosition = RecyclerView.NO_POSITION;
+
+    private final ActivityResultLauncher<String> audioPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isAdded()) {
+                    return;
+                }
+                if (isGranted) {
+                    showAnthemPickerDialog();
+                } else {
+                    Toast.makeText(requireContext(), DivaStrings.anthemPermissionDenied(requireContext()), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private static class DeviceSong {
+        final long id;
+        final String title;
+
+        DeviceSong(long id, @NonNull String title) {
+            this.id = id;
+            this.title = title;
+        }
+    }
 
     public ShadyDetailsFragment() {
         // Constructor vacío requerido
@@ -89,6 +128,8 @@ public class ShadyDetailsFragment extends Fragment {
         TextView emptyStateShadesTitle = view.findViewById(R.id.empty_state_shades_title);
         FloatingActionButton fabAddShade = view.findViewById(R.id.fab_add_shade);
         MaterialButton btnBuyWig = view.findViewById(R.id.btn_buy_wig);
+        MaterialButton btnAssignAnthem = view.findViewById(R.id.btn_assign_anthem);
+        btnPlayAnthem = view.findViewById(R.id.btn_play_anthem);
 
         if (emptyStateShadesTitle != null) {
             emptyStateShadesTitle.setText(DivaStrings.emptyStateShades(requireContext()));
@@ -114,6 +155,8 @@ public class ShadyDetailsFragment extends Fragment {
         );
 
         btnBuyWig.setText(DivaStrings.buttonSearchQueen(requireContext()));
+        btnAssignAnthem.setText(DivaStrings.buttonAssignAnthem(requireContext()));
+        btnPlayAnthem.setText(DivaStrings.buttonPlayAnthem(requireContext()));
         btnBuyWig.setOnClickListener(v -> {
             String query = (currentQueen != null && currentQueen.getName() != null && !currentQueen.getName().isEmpty())
                     ? currentQueen.getName()
@@ -122,6 +165,10 @@ public class ShadyDetailsFragment extends Fragment {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, searchUri);
             startActivity(browserIntent);
         });
+
+        btnAssignAnthem.setOnClickListener(v -> requestAudioPermissionAndPickSong());
+        btnPlayAnthem.setOnClickListener(v -> playAssignedAnthem());
+        syncAnthemButtons();
 
         setupDeleteDialogResultListener();
 
@@ -160,16 +207,22 @@ public class ShadyDetailsFragment extends Fragment {
             return;
         }
 
+        String userId = SessionManager.getUserId(requireContext());
+        if (userId == null || userId.trim().isEmpty()) {
+            updateEmptyState();
+            return;
+        }
+
         SlayVaultDatabase db = SlayVaultDatabase.getInstance(requireContext().getApplicationContext());
 
-        db.queenDao().getQueenById(rawQueenId).observe(getViewLifecycleOwner(), entity -> {
+        db.queenDao().getQueenByIdForUser(rawQueenId, userId).observe(getViewLifecycleOwner(), entity -> {
             if (entity != null) {
                 currentQueen = QueenMapper.fromEntity(entity);
                 displayQueenInfo(currentQueen);
             }
         });
 
-        db.shadeEntryDao().getShadesByQueenId(rawQueenId).observe(getViewLifecycleOwner(), entities -> {
+        db.shadeEntryDao().getShadesByQueenIdForUser(rawQueenId, userId).observe(getViewLifecycleOwner(), entities -> {
             List<Shade> shades = ShadeMapper.fromEntityList(entities);
             shadesAdapter.setShades(shades);
             updateStatistics(shades);
@@ -177,29 +230,155 @@ public class ShadyDetailsFragment extends Fragment {
         });
     }
 
-    @SuppressWarnings("DiscouragedApi") // getIdentifier es necesario: el nombre del drawable viene de la BD
     private void displayQueenInfo(Queen queen) {
         queenNameDetail.setText(queen.getName());
         queenDescriptionDetail.setText(queen.getDescription());
         queenEnvyRatingDetail.setRating(queen.getEnvyLevel());
+        QueenPhotoLoader.load(queenHeaderImage, queen.getPhotoUri(), R.mipmap.ic_launcher);
+        syncAnthemButtons();
+    }
 
-        String photoPath = queen.getPhotoUri();
-        if (photoPath != null && !photoPath.isEmpty()) {
-            java.io.File file = new java.io.File(photoPath);
-            if (file.exists()) {
-                queenHeaderImage.setImageURI(null);
-                queenHeaderImage.setImageURI(Uri.fromFile(file));
-            } else {
-                int resId = getResources().getIdentifier(
-                        photoPath, "drawable", requireContext().getPackageName());
-                queenHeaderImage.setImageResource(resId != 0 ? resId : R.mipmap.ic_launcher);
+    private void requestAudioPermissionAndPickSong() {
+        if (!isAdded()) {
+            return;
+        }
+
+        String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                ? Manifest.permission.READ_MEDIA_AUDIO
+                : Manifest.permission.READ_EXTERNAL_STORAGE;
+        if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+            showAnthemPickerDialog();
+            return;
+        }
+        audioPermissionLauncher.launch(permission);
+    }
+
+    private void showAnthemPickerDialog() {
+        List<DeviceSong> songs = queryDeviceSongs();
+        if (songs.isEmpty()) {
+            Toast.makeText(requireContext(), DivaStrings.anthemNoSongsFound(requireContext()), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] songTitles = new String[songs.size()];
+        for (int i = 0; i < songs.size(); i++) {
+            songTitles[i] = songs.get(i).title;
+        }
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(DivaStrings.anthemSelectTitle(requireContext()))
+                .setItems(songTitles, (dialog, which) -> saveSelectedAnthem(songs.get(which)))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private List<DeviceSong> queryDeviceSongs() {
+        List<DeviceSong> songs = new ArrayList<>();
+        String[] projection = {
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.TITLE
+        };
+
+        try (Cursor cursor = requireContext().getContentResolver().query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                MediaStore.Audio.Media.IS_MUSIC + "!= 0",
+                null,
+                MediaStore.Audio.Media.TITLE + " COLLATE NOCASE ASC"
+        )) {
+            if (cursor == null) {
+                return songs;
             }
-        } else {
-            queenHeaderImage.setImageResource(R.mipmap.ic_launcher);
+            int idIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
+            int titleIdx = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
+
+            while (cursor.moveToNext()) {
+                long songId = cursor.getLong(idIdx);
+                String title = cursor.getString(titleIdx);
+                if (title == null || title.trim().isEmpty()) {
+                    title = DivaStrings.anthemUnknownTitle(requireContext());
+                }
+                songs.add(new DeviceSong(songId, title));
+            }
+        }
+
+        return songs;
+    }
+
+    private void saveSelectedAnthem(@NonNull DeviceSong song) {
+        if (currentQueen == null) {
+            return;
+        }
+        String userId = SessionManager.getUserId(requireContext());
+        if (userId == null || userId.trim().isEmpty()) {
+            return;
+        }
+
+        SlayVaultDatabase.databaseExecutor.execute(() -> {
+            SlayVaultDatabase db = SlayVaultDatabase.getInstance(requireContext().getApplicationContext());
+            com.example.slay_vault.data.entities.QueenEntity queenEntity =
+                    db.queenDao().getQueenByIdSyncForUser(currentQueen.getId(), userId);
+            if (queenEntity == null) {
+                return;
+            }
+
+            queenEntity.setSongId(song.id);
+            queenEntity.setUpdatedAt(new Date());
+            db.queenDao().update(queenEntity);
+            try {
+                new AuthService().upsertQueen(queenEntity);
+            } catch (Exception ignored) {
+                // Si falla remoto, mantenemos el dato local.
+            }
+
+            requireActivity().runOnUiThread(() -> {
+                if (currentQueen != null) {
+                    currentQueen.setSongId(song.id);
+                }
+                syncAnthemButtons();
+                Toast.makeText(requireContext(), DivaStrings.anthemAssigned(requireContext(), song.title), Toast.LENGTH_SHORT).show();
+            });
+        });
+    }
+
+    private void playAssignedAnthem() {
+        if (currentQueen == null || currentQueen.getSongId() == null) {
+            Toast.makeText(requireContext(), DivaStrings.anthemMissing(requireContext()), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        releaseMediaPlayer();
+        Uri songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentQueen.getSongId());
+        try {
+            mediaPlayer = MediaPlayer.create(requireContext(), songUri);
+            if (mediaPlayer == null) {
+                Toast.makeText(requireContext(), DivaStrings.anthemPlaybackError(requireContext()), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            mediaPlayer.setOnCompletionListener(mp -> releaseMediaPlayer());
+            mediaPlayer.start();
+        } catch (Exception e) {
+            releaseMediaPlayer();
+            Toast.makeText(requireContext(), DivaStrings.anthemPlaybackError(requireContext()), Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Actualiza las estadísticas de shades (total e intensidad media)
+    private void syncAnthemButtons() {
+        if (btnPlayAnthem == null) {
+            return;
+        }
+        boolean hasAnthem = currentQueen != null && currentQueen.getSongId() != null;
+        btnPlayAnthem.setEnabled(hasAnthem);
+    }
+
+    private void releaseMediaPlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+    // Actualiza total e intensidad media.
     private void updateStatistics(List<Shade> shades) {
         int totalShades = shades.size();
         shadesTotalCount.setText(String.valueOf(totalShades));
@@ -236,7 +415,7 @@ public class ShadyDetailsFragment extends Fragment {
                 .show();
     }
 
-    // Muestra el menú de opciones para un shade (editar, eliminar, compartir)
+    // Muestra opciones de editar, eliminar y compartir.
     private void showShadeOptions(Shade shade, int position) {
         String[] options = {
             DivaStrings.actionEdit(requireContext()),
@@ -282,6 +461,7 @@ public class ShadyDetailsFragment extends Fragment {
                     if (shade != null) {
                         String shadeTitle = shade.getTitle();
                         String queenId = shade.getQueenId();
+                        String userId = SessionManager.getUserId(requireContext());
                         SlayVaultDatabase.databaseExecutor.execute(() -> {
                             SlayVaultDatabase db = SlayVaultDatabase
                                     .getInstance(requireContext().getApplicationContext());
@@ -297,6 +477,14 @@ public class ShadyDetailsFragment extends Fragment {
                                         .format(latest.getDate());
                             }
                             db.queenDao().updateLastShadeDate(queenId, dateStr, now);
+
+                            if (userId != null && !userId.trim().isEmpty()) {
+                                try {
+                                    new AuthService().deleteShade(userId, shade.getId());
+                                } catch (Exception ignored) {
+                                    // Si falla remoto, se mantiene el borrado local.
+                                }
+                            }
                         });
                         LocalReminderNotifier.notifyShadeDeleted(requireContext(), shadeTitle);
                         Toast.makeText(getContext(), getString(R.string.shade_deleted), Toast.LENGTH_SHORT).show();
@@ -307,7 +495,7 @@ public class ShadyDetailsFragment extends Fragment {
         );
     }
 
-    // Comparte el shade via Intent implícito (cualquier app de mensajería/RRSS)
+    // Comparte el shade mediante intent implícito.
     private void shareShade(Shade shade) {
         String queenName = (currentQueen != null) ? currentQueen.getName() : getString(R.string.search_queen_fallback);
         String body = shade.getTitle();
@@ -333,5 +521,11 @@ public class ShadyDetailsFragment extends Fragment {
                         shade != null ? shade.getTitle() : null
                 )
                 .show(getParentFragmentManager(), TAG_DELETE_DIALOG);
+    }
+
+    @Override
+    public void onStop() {
+        releaseMediaPlayer();
+        super.onStop();
     }
 }

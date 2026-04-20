@@ -64,6 +64,10 @@ public interface QueenDao {
     @Query("DELETE FROM queens")
     void deleteAll();
 
+    // Eliminar todas las Drag Queens de un usuario
+    @Query("DELETE FROM queens WHERE user_id = :userId")
+    void deleteAllByUser(String userId);
+
     // Obtener todas las Drag Queens (LiveData)
     @Query("SELECT * FROM queens ORDER BY updated_at DESC")
     LiveData<List<QueenEntity>> getAllQueens();
@@ -124,5 +128,19 @@ public interface QueenDao {
     @Query("SELECT SUM(shades_count) FROM queens")
     LiveData<Integer> getTotalShadesCount();
 
-}
+    // Obtener todas las Drag Queens de un usuario (LiveData)
+    @Query("SELECT * FROM queens WHERE user_id = :userId ORDER BY updated_at DESC")
+    LiveData<List<QueenEntity>> getAllQueensByUser(String userId);
 
+    // Obtener todas las Drag Queens de un usuario (lista simple)
+    @Query("SELECT * FROM queens WHERE user_id = :userId ORDER BY updated_at DESC")
+    List<QueenEntity> getAllQueensListByUser(String userId);
+
+    // Obtener una Drag Queen por ID y usuario (LiveData)
+    @Query("SELECT * FROM queens WHERE id = :queenId AND user_id = :userId")
+    LiveData<QueenEntity> getQueenByIdForUser(String queenId, String userId);
+
+    // Obtener una Drag Queen por ID y usuario (sin LiveData, para operaciones síncronas)
+    @Query("SELECT * FROM queens WHERE id = :queenId AND user_id = :userId")
+    QueenEntity getQueenByIdSyncForUser(String queenId, String userId);
+}

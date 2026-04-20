@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,12 +29,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.slay_vault.data.auth.SessionManager;
 import com.example.slay_vault.data.database.SlayVaultDatabase;
 import com.example.slay_vault.data.mappers.QueenMapper;
 import com.example.slay_vault.data.utils.ShadeBookExporter;
 import com.example.slay_vault.notifications.AirplaneModeReceiver;
 import com.example.slay_vault.notifications.LocalReminderNotifier;
+import com.example.slay_vault.notifications.TeaReminderScheduler;
 import com.example.slay_vault.ui.DivaStrings;
+import com.example.slay_vault.ui.ProfileEditActivity;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.IOException;
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int PAGE_LIST = 0;
     private static final int PAGE_SETTINGS = 1;
     private static final int PAGE_SHADE_DETAILS = 2;
+    private static final int PAGE_SHOW_TIMER = 3;
+    private static final int PAGE_GLOBAL_SHOUT = 4;
 
     private NavController navController;
     private NavController detailsNavController;
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private NavigationView navigationView;
     private boolean airplaneReceiverRegistered = false;
 
     private final AirplaneModeReceiver airplaneModeReceiver = new AirplaneModeReceiver();
@@ -62,11 +69,14 @@ public class MainActivity extends AppCompatActivity {
                         if (uri == null) return;
                         SlayVaultDatabase.databaseExecutor.execute(() -> {
                             try {
-                                        java.util.List<com.example.slay_vault.data.models.Queen> queens =
-                                        QueenMapper.fromEntityList(
-                                                SlayVaultDatabase.getInstance(getApplicationContext())
-                                                        .queenDao()
-                                                        .getAllQueensList());
+                                String userId = SessionManager.getUserId(this);
+                                java.util.List<com.example.slay_vault.data.models.Queen> queens =
+                                        (userId == null || userId.trim().isEmpty())
+                                                ? java.util.Collections.emptyList()
+                                                : QueenMapper.fromEntityList(
+                                                        SlayVaultDatabase.getInstance(getApplicationContext())
+                                                                .queenDao()
+                                                                .getAllQueensListByUser(userId));
                                 ShadeBookExporter.writeToUri(
                                         getApplicationContext(),
                                         getContentResolver(),
@@ -87,8 +97,10 @@ public class MainActivity extends AppCompatActivity {
                 setNotificationsPreferenceEnabled(isGranted);
                 if (isGranted) {
                     LocalReminderNotifier.showMakeupReminder(this);
+                    TeaReminderScheduler.syncReminder(this);
                     Toast.makeText(this, R.string.notification_enabled_toast, Toast.LENGTH_SHORT).show();
                 } else {
+                    TeaReminderScheduler.syncReminder(this);
                     Toast.makeText(this, R.string.notification_permission_denied, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -96,10 +108,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!SessionManager.isLoggedIn(this)) {
+            startActivity(new Intent(this, com.example.slay_vault.ui.LoginActivity.class));
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         LocalReminderNotifier.createChannel(this);
+        TeaReminderScheduler.syncReminder(this);
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -146,7 +166,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupNavigationDrawer() {
-        NavigationView navigationView = findViewById(R.id.navigation_view);
+        navigationView = findViewById(R.id.navigation_view);
+        bindDrawerHeader();
+
+        MenuItem showTimerItem = navigationView.getMenu().findItem(R.id.nav_show_timer);
+        if (showTimerItem != null) {
+            showTimerItem.setTitle(DivaStrings.actionShowTimerStart(this));
+        }
 
         drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout,
@@ -158,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
         if (drawerNavController != null) {
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                     R.id.queensListFragment,
+                    R.id.showTimerFragment,
+                    R.id.gritoDiaFragment,
                     R.id.settingsFragment,
                     R.id.shadyDetailsFragment)
                     .setOpenableLayout(drawerLayout)
@@ -165,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
             if (getSupportActionBar() != null) {
                 NavigationUI.setupActionBarWithNavController(this, drawerNavController, appBarConfiguration);
             }
-            // Solo auto-vinculamos el drawer en single-pane.
+            // Vincula el drawer automáticamente solo en single-pane.
             if (!isDualPane && navController != null) {
                 NavigationUI.setupWithNavController(navigationView, navController);
             }
@@ -184,11 +212,25 @@ public class MainActivity extends AppCompatActivity {
                 } else if (navController != null) {
                     safeNavigate(navController, R.id.action_global_to_queensList, null);
                 }
+            } else if (id == R.id.nav_show_timer) {
+                if (isDualPane && detailsNavController != null) {
+                    safeNavigate(detailsNavController, R.id.showTimerFragment, null);
+                } else if (navController != null) {
+                    safeNavigate(navController, R.id.action_global_to_showTimer, null);
+                }
             } else if (id == R.id.nav_settings) {
                 if (isDualPane && detailsNavController != null) {
                     safeNavigate(detailsNavController, R.id.settingsFragment, null);
                 } else if (navController != null) {
                     safeNavigate(navController, R.id.action_global_to_settings, null);
+                }
+            } else if (id == R.id.nav_shade_map) {
+                startActivity(new Intent(this, com.example.slay_vault.ui.ShadeMapActivity.class));
+            } else if (id == R.id.nav_global_shout) {
+                if (isDualPane && detailsNavController != null) {
+                    safeNavigate(detailsNavController, R.id.gritoDiaFragment, null);
+                } else if (navController != null) {
+                    safeNavigate(navController, R.id.action_global_to_globalShout, null);
                 }
             } else if (id == R.id.nav_export) {
                 exportLauncher.launch(DivaStrings.exportDefaultFilename(this));
@@ -198,6 +240,33 @@ public class MainActivity extends AppCompatActivity {
 
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindDrawerHeader();
+    }
+
+    private void bindDrawerHeader() {
+        if (navigationView == null || navigationView.getHeaderCount() == 0) {
+            return;
+        }
+        View header = navigationView.getHeaderView(0);
+        TextView usernameView = header.findViewById(R.id.tv_drawer_user_name);
+        TextView hintView = header.findViewById(R.id.tv_drawer_user_hint);
+
+        String username = SessionManager.getUsername(this);
+
+        usernameView.setText((username == null || username.trim().isEmpty())
+                ? getString(R.string.auth_username)
+                : username);
+        hintView.setText(R.string.profile_tap_to_edit);
+
+        header.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileEditActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
         });
     }
 
@@ -218,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 unregisterReceiver(airplaneModeReceiver);
             } catch (IllegalArgumentException ignored) {
-                // Evita crash si el receptor ya no estaba registrado al recrear Activity.
+                // Evita fallo si el receptor ya no estaba registrado.
             }
             airplaneReceiverRegistered = false;
         }
@@ -281,6 +350,10 @@ public class MainActivity extends AppCompatActivity {
 
             if (page == PAGE_SETTINGS) {
                 safeNavigate(detailsNavController, R.id.settingsFragment, null);
+            } else if (page == PAGE_SHOW_TIMER) {
+                safeNavigate(detailsNavController, R.id.showTimerFragment, null);
+            } else if (page == PAGE_GLOBAL_SHOUT) {
+                safeNavigate(detailsNavController, R.id.gritoDiaFragment, null);
             } else if (page == PAGE_SHADE_DETAILS && shadyId != null) {
                 Bundle args = new Bundle();
                 args.putString("shady_id", shadyId);
@@ -297,6 +370,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (page == PAGE_SETTINGS) {
             safeNavigate(navController, R.id.action_global_to_settings, null);
+        } else if (page == PAGE_SHOW_TIMER) {
+            safeNavigate(navController, R.id.action_global_to_showTimer, null);
+        } else if (page == PAGE_GLOBAL_SHOUT) {
+            safeNavigate(navController, R.id.action_global_to_globalShout, null);
         } else if (page == PAGE_SHADE_DETAILS && shadyId != null) {
             Bundle args = new Bundle();
             args.putString("shady_id", shadyId);
@@ -313,6 +390,12 @@ public class MainActivity extends AppCompatActivity {
         int destinationId = controller.getCurrentDestination().getId();
         if (destinationId == R.id.settingsFragment) {
             return PAGE_SETTINGS;
+        }
+        if (destinationId == R.id.showTimerFragment) {
+            return PAGE_SHOW_TIMER;
+        }
+        if (destinationId == R.id.gritoDiaFragment) {
+            return PAGE_GLOBAL_SHOUT;
         }
         if (destinationId == R.id.shadyDetailsFragment) {
             return PAGE_SHADE_DETAILS;
@@ -373,6 +456,8 @@ public class MainActivity extends AppCompatActivity {
         if (navController != null) {
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                     R.id.queensListFragment,
+                    R.id.showTimerFragment,
+                    R.id.gritoDiaFragment,
                     R.id.settingsFragment,
                     R.id.shadyDetailsFragment)
                     .setOpenableLayout(drawerLayout)
@@ -400,6 +485,7 @@ public class MainActivity extends AppCompatActivity {
                         notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
                     } else {
                         LocalReminderNotifier.showMakeupReminder(this);
+                        TeaReminderScheduler.syncReminder(this);
                         Toast.makeText(this, R.string.notification_test_sent, Toast.LENGTH_SHORT).show();
                     }
                 })
@@ -413,4 +499,5 @@ public class MainActivity extends AppCompatActivity {
                 .putBoolean(LocalReminderNotifier.PREF_ENABLE_NOTIFICATIONS, enabled)
                 .apply();
     }
+
 }

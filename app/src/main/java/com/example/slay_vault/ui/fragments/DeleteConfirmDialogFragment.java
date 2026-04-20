@@ -15,7 +15,7 @@ import com.example.slay_vault.ui.DivaStrings;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-// Diálogo de confirmación de borrado con botones "Slay" / "Sashay Away" y textos Diva.
+// Dialogo de confirmación para acciones de borrado.
 public class DeleteConfirmDialogFragment extends DialogFragment {
 
     public static final String RESULT_CONFIRMED = "result_confirmed";

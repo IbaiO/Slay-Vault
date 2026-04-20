@@ -1,8 +1,13 @@
 package com.example.slay_vault.ui.fragments;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.provider.MediaStore;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RatingBar;
@@ -12,19 +17,24 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.slay_vault.R;
+import com.example.slay_vault.data.auth.SessionManager;
 import com.example.slay_vault.data.database.SlayVaultDatabase;
 import com.example.slay_vault.data.entities.QueenEntity;
+import com.example.slay_vault.data.remote.AuthService;
 import com.example.slay_vault.notifications.LocalReminderNotifier;
 import com.example.slay_vault.ui.DivaStrings;
+import com.example.slay_vault.ui.utils.QueenPhotoLoader;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,7 +42,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
-// Diálogo para añadir o editar una Queen. Gestiona foto via SAF, validación y persistencia en Room.
+// Diálogo para añadir o editar una Queen. Gestiona foto por galería/cámara, validación y persistencia en Room.
 public class AddEditQueenDialogFragment extends DialogFragment {
 
     public static final String RESULT_KEY  = "add_edit_queen_result";
@@ -40,13 +50,15 @@ public class AddEditQueenDialogFragment extends DialogFragment {
 
     private static final String ARG_QUEEN_ID = "arg_queen_id";
 
-    // URI seleccionada por el usuario (válida solo mientras el diálogo está abierto)
+    // URI temporal seleccionada por el usuario.
     private Uri selectedImageUri = null;
-    // Ruta interna guardada (precargada en modo edición)
+    // Ruta interna de foto ya guardada.
     private String existingPhotoPath = null;
 
     private ShapeableImageView photoPreview;
     private ActivityResultLauncher<String> pickImageLauncher;
+    private ActivityResultLauncher<Intent> takePhotoLauncher;
+    private Uri cameraTempUri;
 
     // Crea el diálogo en modo añadir
     public static AddEditQueenDialogFragment newInstance() {
@@ -76,6 +88,18 @@ public class AddEditQueenDialogFragment extends DialogFragment {
                     }
                 }
         );
+
+        takePhotoLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == android.app.Activity.RESULT_OK && cameraTempUri != null) {
+                        selectedImageUri = cameraTempUri;
+                        photoPreview.setImageURI(selectedImageUri);
+                        Toast.makeText(requireContext(),
+                                getString(R.string.photo_selected), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     @NonNull
@@ -93,16 +117,20 @@ public class AddEditQueenDialogFragment extends DialogFragment {
         String queenId = getArguments() != null ? getArguments().getString(ARG_QUEEN_ID) : null;
         boolean isEdit = queenId != null;
 
-        btnPickPhoto.setOnClickListener(v ->
-                pickImageLauncher.launch("image/*")
-        );
+        btnPickPhoto.setOnClickListener(v -> showPhotoSourceDialog());
 
         if (isEdit) {
             SlayVaultDatabase.databaseExecutor.execute(() -> {
+                final String userId = SessionManager.getUserId(requireContext());
+                if (userId == null || userId.trim().isEmpty()) {
+                    Toast.makeText(requireContext(), R.string.auth_required, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 QueenEntity entity = SlayVaultDatabase
                         .getInstance(requireContext().getApplicationContext())
                         .queenDao()
-                        .getQueenByIdSync(queenId);
+                        .getQueenByIdSyncForUser(queenId, userId);
                 if (entity != null) {
                     existingPhotoPath = entity.getPhotoUri();
                     requireActivity().runOnUiThread(() -> {
@@ -142,39 +170,87 @@ public class AddEditQueenDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    // Carga la foto existente: fichero interno o drawable por nombre
+    // Carga la foto existente en la vista previa.
     @SuppressWarnings("DiscouragedApi")
     private void loadExistingPhoto(String photoPath) {
-        if (photoPath == null || photoPath.isEmpty()) return;
-        File file = new File(photoPath);
-        if (file.exists()) {
-            photoPreview.setImageURI(Uri.fromFile(file));
-        } else {
-            int resId = requireContext().getResources().getIdentifier(
-                    photoPath, "drawable", requireContext().getPackageName());
-            if (resId != 0) photoPreview.setImageResource(resId);
+        QueenPhotoLoader.load(photoPreview, photoPath, R.mipmap.ic_launcher_round);
+    }
+
+    private void showPhotoSourceDialog() {
+        String[] options = {
+                getString(R.string.photo_source_gallery),
+                getString(R.string.photo_source_camera)
+        };
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.photo_source_title)
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        pickImageLauncher.launch("image/*");
+                    } else {
+                        launchCameraCapture();
+                    }
+                })
+                .show();
+    }
+
+    private void launchCameraCapture() {
+        try {
+            File cameraDir = new File(requireContext().getCacheDir(), "camera_photos");
+            if (!cameraDir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                cameraDir.mkdirs();
+            }
+            File photoFile = File.createTempFile("queen_", ".jpg", cameraDir);
+            cameraTempUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    requireContext().getPackageName() + ".fileprovider",
+                    photoFile
+            );
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraTempUri);
+            cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            takePhotoLauncher.launch(cameraIntent);
+        } catch (IOException e) {
+            Toast.makeText(requireContext(), R.string.photo_camera_error, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void saveQueen(boolean isEdit, @Nullable String queenId,
                            String name, String desc, float envy) {
-        final String newPhotoPath = copyImageToInternalStorage(selectedImageUri, queenId);
+        final String userId = SessionManager.getUserId(requireContext());
+        if (userId == null || userId.trim().isEmpty()) {
+            Toast.makeText(requireContext(), R.string.auth_required, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final String resolvedQueenId = (isEdit && queenId != null)
+                ? queenId
+                : UUID.randomUUID().toString();
+        final String newPhotoPath = copyImageToInternalStorage(selectedImageUri, resolvedQueenId);
 
         SlayVaultDatabase db = SlayVaultDatabase
                 .getInstance(requireContext().getApplicationContext());
+        AuthService authService = new AuthService();
 
         SlayVaultDatabase.databaseExecutor.execute(() -> {
-            String finalPhotoPath;
+            String finalPhotoPath = isEdit ? existingPhotoPath : null;
             if (newPhotoPath != null) {
                 finalPhotoPath = newPhotoPath;
-            } else if (isEdit) {
-                finalPhotoPath = existingPhotoPath;
-            } else {
-                finalPhotoPath = null;
+                String base64Photo = encodeImageAsBase64(selectedImageUri);
+                if (base64Photo != null && !base64Photo.isEmpty()) {
+                    try {
+                        String remoteUrl = authService.uploadQueenPhoto(userId, resolvedQueenId, base64Photo);
+                        if (remoteUrl != null && !remoteUrl.trim().isEmpty()) {
+                            finalPhotoPath = remoteUrl.trim();
+                        }
+                    } catch (Exception ignored) {
+                        // Si falla la subida remota, se conserva la copia local.
+                    }
+                }
             }
 
             if (isEdit) {
-                QueenEntity entity = db.queenDao().getQueenByIdSync(queenId);
+                QueenEntity entity = db.queenDao().getQueenByIdSyncForUser(queenId, userId);
                 if (entity != null) {
                     entity.setName(name);
                     entity.setDescription(desc);
@@ -182,16 +258,27 @@ public class AddEditQueenDialogFragment extends DialogFragment {
                     entity.setPhotoUri(finalPhotoPath);
                     entity.setUpdatedAt(new Date());
                     db.queenDao().update(entity);
+                    try {
+                        authService.upsertQueen(entity);
+                    } catch (Exception ignored) {
+                        // Si falla remoto, el guardado local se mantiene.
+                    }
                     LocalReminderNotifier.notifyQueenUpdated(
                             requireContext().getApplicationContext(), name);
                 }
             } else {
                 QueenEntity entity = new QueenEntity(
-                        UUID.randomUUID().toString(),
+                        resolvedQueenId,
+                        userId,
                         name, desc, finalPhotoPath, envy,
                         new Date(), new Date()
                 );
                 db.queenDao().insert(entity);
+                try {
+                    authService.upsertQueen(entity);
+                } catch (Exception ignored) {
+                    // Si falla remoto, el guardado local se mantiene.
+                }
                 LocalReminderNotifier.notifyQueenCreated(
                         requireContext().getApplicationContext(), name);
             }
@@ -205,7 +292,7 @@ public class AddEditQueenDialogFragment extends DialogFragment {
         });
     }
 
-    // Copia la imagen seleccionada al almacenamiento interno de la app
+    // Copia la imagen seleccionada al almacenamiento interno.
     @Nullable
     private String copyImageToInternalStorage(@Nullable Uri sourceUri, @Nullable String existingQueenId) {
         if (sourceUri == null) return null;
@@ -225,6 +312,28 @@ public class AddEditQueenDialogFragment extends DialogFragment {
                 while ((len = in.read(buf)) > 0) out.write(buf, 0, len);
             }
             return destFile.getAbsolutePath();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private String encodeImageAsBase64(@Nullable Uri sourceUri) {
+        if (sourceUri == null) {
+            return null;
+        }
+        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(sourceUri)) {
+            if (inputStream == null) {
+                return null;
+            }
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            if (bitmap == null) {
+                return null;
+            }
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 82, buffer);
+            byte[] photoBytes = buffer.toByteArray();
+            return Base64.encodeToString(photoBytes, Base64.DEFAULT);
         } catch (IOException e) {
             return null;
         }

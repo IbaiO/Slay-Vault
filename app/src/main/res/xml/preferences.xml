@@ -45,6 +45,19 @@
             android:defaultValue="true"
             app:icon="@android:drawable/ic_dialog_info" />
 
+        <SwitchPreferenceCompat
+            android:key="tea_reminder_enabled"
+            android:title="@string/tea_reminder_title"
+            android:summary="@string/tea_reminder_summary"
+            android:defaultValue="true"
+            app:icon="@android:drawable/ic_lock_idle_alarm" />
+
+        <Preference
+            android:key="tea_reminder_time"
+            android:title="@string/tea_reminder_time_title"
+            android:summary="@string/tea_reminder_time_summary"
+            app:icon="@android:drawable/ic_menu_recent_history" />
+
     </PreferenceCategory>
 
     <!-- Categoría de Información -->
@@ -53,11 +66,22 @@
         android:title="@string/about">
 
         <Preference
+            android:key="change_password"
+            android:title="@string/password_edit_title"
+            android:summary="@string/password_edit_summary"
+            app:icon="@android:drawable/ic_lock_lock" />
+
+        <Preference
+            android:key="logout"
+            android:title="@string/logout"
+            android:summary="@string/logout_summary"
+            app:icon="@android:drawable/ic_lock_power_off" />
+
+        <Preference
             android:key="version"
             android:title="@string/version"
-            android:summary="1.0" />
+            android:summary="2.0" />
 
     </PreferenceCategory>
 
 </PreferenceScreen>
-

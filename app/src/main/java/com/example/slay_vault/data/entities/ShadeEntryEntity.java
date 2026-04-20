@@ -64,15 +64,29 @@ public class ShadeEntryEntity {
     @ColumnInfo(name = "updated_at")
     private Date updatedAt;
 
-    // Constructor vacío requerido por Room
+    @ColumnInfo(name = "user_id")
+    @NonNull
+    private String userId;
+
+    @ColumnInfo(name = "latitude")
+    private Double latitude;
+
+    @ColumnInfo(name = "longitude")
+    private Double longitude;
+
+    @ColumnInfo(name = "location_address")
+    private String locationAddress;
+
+    // Constructor vacío
     public ShadeEntryEntity() { }
 
-    // Constructor completo para insertar datos desde código
+    // Constructor completo (hardcode)
     @Ignore
-    public ShadeEntryEntity(@NonNull String id, @NonNull String queenId, @NonNull String title,
+    public ShadeEntryEntity(@NonNull String id, @NonNull String userId, @NonNull String queenId, @NonNull String title,
                             String description, @NonNull String category, float intensity,
                             Date date, List<String> tags, Date createdAt, Date updatedAt) {
         this.id = id;
+        this.userId = userId;
         this.queenId = queenId;
         this.title = title;
         this.description = description;
@@ -84,8 +98,18 @@ public class ShadeEntryEntity {
         this.updatedAt = updatedAt;
     }
 
-    // Getters y setters
+    @Ignore
+    public ShadeEntryEntity(@NonNull String id, @NonNull String userId, @NonNull String queenId, @NonNull String title,
+                            String description, @NonNull String category, float intensity,
+                            Date date, List<String> tags, Date createdAt, Date updatedAt,
+                            Double latitude, Double longitude, String locationAddress) {
+        this(id, userId, queenId, title, description, category, intensity, date, tags, createdAt, updatedAt);
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.locationAddress = locationAddress;
+    }
 
+    // Getters y settersW
     @NonNull
     public String getId() {
         return id;
@@ -170,16 +194,51 @@ public class ShadeEntryEntity {
         this.updatedAt = updatedAt;
     }
 
+    @NonNull
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(@NonNull String userId) {
+        this.userId = userId;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(String locationAddress) {
+        this.locationAddress = locationAddress;
+    }
+
     @Override
     public String toString() {
         return "ShadeEntryEntity{" +
                 "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
                 ", queenId='" + queenId + '\'' +
                 ", title='" + title + '\'' +
                 ", category='" + category + '\'' +
                 ", intensity=" + intensity +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 ", date=" + date +
                 '}';
     }
 }
-

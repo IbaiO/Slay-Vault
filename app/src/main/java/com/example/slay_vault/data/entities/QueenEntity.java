@@ -17,6 +17,10 @@ public class QueenEntity {
     @ColumnInfo(name = "id")
     private String id;
 
+    @ColumnInfo(name = "user_id")
+    @NonNull
+    private String userId;
+
     @ColumnInfo(name = "name")
     @NonNull
     private String name;
@@ -36,20 +40,24 @@ public class QueenEntity {
     @ColumnInfo(name = "last_shade_date")
     private String lastShadeDate = null; // Se actualiza al añadir/borrar shades
 
+    @ColumnInfo(name = "song_id")
+    private Long songId;
+
     @ColumnInfo(name = "created_at")
     private Date createdAt;
 
     @ColumnInfo(name = "updated_at")
     private Date updatedAt;
 
-    // Constructor vacío requerido por Room
+    // Constructor vacío
     public QueenEntity() { }
 
-    // Constructor completo para insertar datos desde código
+    // Constructor completo (hardcode).
     @Ignore
-    public QueenEntity(@NonNull String id, @NonNull String name, String description,
+    public QueenEntity(@NonNull String id, @NonNull String userId, @NonNull String name, String description,
                        String photoUri, float envyLevel, Date createdAt, Date updatedAt) {
         this.id = id;
+        this.userId = userId;
         this.name = name;
         this.description = description;
         this.photoUri = photoUri;
@@ -58,7 +66,7 @@ public class QueenEntity {
         this.updatedAt = updatedAt;
     }
 
-    // Getters y setters requeridos por Room
+    // Getters y setters.
 
     @NonNull
     public String getId() {
@@ -67,6 +75,15 @@ public class QueenEntity {
 
     public void setId(@NonNull String id) {
         this.id = id;
+    }
+
+    @NonNull
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(@NonNull String userId) {
+        this.userId = userId;
     }
 
     @NonNull
@@ -118,6 +135,14 @@ public class QueenEntity {
         this.lastShadeDate = lastShadeDate;
     }
 
+    public Long getSongId() {
+        return songId;
+    }
+
+    public void setSongId(Long songId) {
+        this.songId = songId;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -138,6 +163,7 @@ public class QueenEntity {
     public String toString() {
         return "QueenEntity{" +
                 "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
                 ", name='" + name + '\'' +
                 ", envyLevel=" + envyLevel +
                 ", shadesCount=" + shadesCount +

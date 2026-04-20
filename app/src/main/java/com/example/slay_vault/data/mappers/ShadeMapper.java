@@ -18,6 +18,7 @@ public class ShadeMapper {
         Shade shade = new Shade();
         shade.setId(entity.getId());
         shade.setQueenId(entity.getQueenId());
+        shade.setUserId(entity.getUserId());
         shade.setTitle(entity.getTitle());
         shade.setDescription(entity.getDescription());
         shade.setCategory(entity.getCategory());
@@ -26,6 +27,9 @@ public class ShadeMapper {
         shade.setTags(entity.getTags());
         shade.setCreatedAt(entity.getCreatedAt());
         shade.setUpdatedAt(entity.getUpdatedAt());
+        shade.setLatitude(entity.getLatitude());
+        shade.setLongitude(entity.getLongitude());
+        shade.setLocationAddress(entity.getLocationAddress());
 
         return shade;
     }
